@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+<script>
+function cekAkses() {
+    var now = new Date();
+    var jam = now.getHours();
+    var menit = now.getMinutes();
+
+    var waktu = jam * 60 + menit;
+
+    var mulai = 23* 60 + 15;   // 08:30
+     var awal= 6* 60 + 15;   // 08:30
+    var selesai = 17 * 60 ; // 17
+
+    if (waktu > mulai) {
+        window.location.href = "home.html";
+         alert("akses di tutup, Batas waktu kehadiran jam 08:15 wib !!");
+     return; } 
+     
+     window.location.href = "aksesAbsen.html";
+}
+
+cekAkses();
+</script>
+
+ 
+
+</body>
+</html>

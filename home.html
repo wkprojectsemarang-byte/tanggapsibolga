@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html>
+    
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+   .foto {
+  width:50px;
+  height:50px;
+  object-fit:cover;
+}
+body{
+    margin:0;
+    font-family:Arial;
+}
+
+.navbar{
+   display:flex;
+   justify-content:space-between;
+   align-items:center;
+   padding:10px 20px;
+   background:#87CEFA;
+   color:white;
+}
+
+.logo{
+   font-size:14px;
+   font-weight:bold;
+}
+
+.profile-menu{
+   position:relative;
+}
+
+.profile-img{
+   width:40px;
+   height:40px;
+   border-radius:50%;
+   cursor:pointer;
+   border:2px solid white;
+}
+
+.dropdown{
+   position:absolute;
+   right:0;
+   top:50px;
+   background:white;
+   width:150px;
+   box-shadow:0 2px 10px rgba(0,0,0,0.2);
+   border-radius:6px;
+   display:none;
+   z-index: 2000; /* 🔥 ini penting */
+}
+
+.dropdown a{
+   display:block;
+   padding:10px;
+   text-decoration:none;
+   color:#333;
+}
+
+.dropdown a:hover{
+   background:#f1f1f1;
+}
+
+.photoTable{
+width: 100%;
+height:50px;
+object-fit:cover;
+border-radius:6px;
+border:1px solid #ddd;
+}
+
+
+.logo{
+    display:flex;
+    align-items:center; /* bikin sejajar tengah */
+    gap:10px; /* jarak antara gambar dan teks */
+}
+
+.logo img{
+    width:60px;
+    height:30px;
+    border-radius:5%; /* opsional biar bulat */
+}
+
+.logo span{
+    color:white;
+    font-size:15px;
+    font-weight:bold;
+}
+
+#pagination {
+    margin-top: 15px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+#pagination button {
+    padding: 8px 16px;
+    margin: 5px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Tombol Prev */
+.btn-prev {
+    background-color: #ff9800; /* orange terang */
+    color: white;
+}
+
+.btn-prev:hover {
+    background-color: #e68900;
+}
+
+/* Tombol Next */
+.btn-next {
+    background-color: #4CAF50; /* hijau terang */
+    color: white;
+}
+
+.btn-next:hover {
+    background-color: #3e8e41;
+}
+
+/* Saat disabled */
+#pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.btn-page {
+    font-size: 12px;
+    padding: 4px 8px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+.btn-page:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+     padding: 0 10px;
+}
+
+table {
+    width: 100%;
+    min-width: 600px;
+}
+
+th, td {
+    padding:6px 8px; /* lebih kecil */
+    border:1px solid #ddd;
+    text-align:center;
+    font-size:12px; /* kecil & rapi */
+}
+
+th{
+background:#87CEFA;
+color:white;
+}
+
+img{
+border-radius:40%;
+}
+#jam {
+    font-size:13px;
+    font-family:comic;
+    font-weight:bold;
+}
+
+
+button{
+    width:120px;
+    height:30px;
+    font-size:13px;
+    margin:10px;
+    border:none;
+    border-radius:8px;
+    color:white;
+    cursor:pointer;
+}
+
+.server2{
+    background:#33b7d84d;
+}
+
+.photoTable{
+    width:40px;
+    height:40px;
+}
+
+/* Modal */
+.modal{
+    display:none;
+    position:fixed;
+    z-index:999;
+    padding-top:100px;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background-color:rgba(0,0,0,0.8);
+}
+
+.modal-content{
+    display:block;
+    margin:auto;
+    max-width:80%;
+    max-height:80%;
+    border-radius:10px;
+}
+
+.close{
+    position:absolute;
+    top:20px;
+    right:40px;
+    color:white;
+    font-size:30px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px; /* samakan dengan tabel */
+    font-weight: bold;
+    color: white;
+    min-width: 80px;
+}
+
+/* warna masuk */
+.masuk {
+    background: #82b7d6; /* hijau */
+}
+
+/* warna pulang */
+.pulang {
+    background: #e9756cb6; /* merah */
+}
+
+/* jika belum pulang */
+.belum {
+    background: #9E9E9E; /* abu */
+}
+
+.izin {
+    background: #f44336; /* abu */
+}
+
+.tidak-hadir {
+    background: #006400; /* hijau tua */
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    flex-wrap: wrap;
+}
+
+/* JAM */
+#jam {
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* SEARCH */
+.search-box {
+    position: relative;
+    width: 250px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border-radius: 25px;
+    border: 1px solid #ddd;
+    outline: none;
+    font-size: 13px;
+    background: #f9f9f9;
+    transition: 0.3s;
+}
+
+.search-box input:focus {
+    border-color: #2196F3;
+    background: #fff;
+    box-shadow: 0 0 6px rgba(33,150,243,0.3);
+}
+
+.search-box .icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    #jam {
+        text-align: center;
+    }
+}
+
+/* search tetap kanan */
+.search-box {
+    max-width: 250px;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* ini penting biar sejajar */
+    gap: 10px;
+    width: 100%;
+    padding: 10px 15px;
+}
+
+#jam {
+    white-space: nowrap; /* biar tidak turun baris */
+}
+
+/* Keterangan modern */
+.ket {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 100px;
+}
+
+/* Tepat waktu → hijau muda pudar */
+.tepat {
+    background: #d4edda; /* hijau soft */
+    color: #155724;      /* hijau tua biar tetap kontras */
+}
+
+/* Terlambat → pink muda pudar */
+.terlambat {
+    background: #f8d7da; /* pink soft */
+    color: #721c24;      /* merah tua biar terbaca */
+}
+
+.text-kecil {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.main-container {
+    width: 100%;
+    padding: 0; /* hilangkan padding */
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.running-text {
+    width: 100%;
+    overflow: hidden;
+    background: linear-gradient(90deg, #2196F3, #64B5F6);
+    color: white;
+    padding: 8px 0;
+    border-radius: 8px;
+    margin: 10px 0;
+    position: relative;
+}
+
+.running-content {
+    display: inline-block;
+    white-space: nowrap;
+    padding-left: 100%;
+    animation: runningText 15s linear infinite;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* animasi jalan */
+@keyframes runningText {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.running-content:hover {
+    animation-play-state: paused;
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+    <img src="https://res.cloudinary.com/dwzjlkkah/image/upload/v1777179447/wika_download_hnmptr.png" alt="logo">
+    <span>Tanggap Darurat Sibolga</span>
+  </div>
+   <div class="profile-menu">
+      <img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcT71XYFpl12s0dnyE1LIVQzkcqEoQ_uMykrIoomgoqxKrJXM2rT" class="profile-img" onclick="toggleMenu()">
+
+      <div class="dropdown" id="dropdownMenu">
+         <a href="profile.html">Profile <span id="user"></span></a>
+         <a href="cekwaktu2.html" id="AbsenMasuk">Absen Kehadiran</a>
+         <a href="checkAbsenPulang.html" id="AbsenPulang" style="display:none;">Absen Pulang</a>
+         <a href="dataAbsen.html">Data </a>
+         <a href="passw.html">Ganti Password </a>
+        <a href="izintabel.html" id="menuIzin" style="display:none;">Request Izin Karyawan</a>
+        <a href="Register.html" id="menuRegister" style="display:none;">Registrasi User</a>
+         <a href="index.html">Logout</a>
+      </div>
+  
+   </div>
+</nav>
+ 
+  
+<script>
+function toggleMenu(){
+   const menu = document.getElementById("dropdownMenu");
+   menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+ 
+const username = localStorage.getItem("username");
+
+if (!username) {
+    window.location.href = "index.html";
+} else {
+    document.getElementById("user").textContent = username;
+}
+
+
+
+// tampilkan nama di menu
+document.getElementById("user").textContent = username;
+
+// cek jika Nurhakiki
+if (username === "Nurhakiki") {
+    document.getElementById("menuRegister").style.display = "block";
+}
+
+if (username === "Nurhakiki") {
+    document.getElementById("menuIzin").style.display = "block";
+}
+</script>
+
+
+</head>
+
+<body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.getElementById("nama").innerHTML = getCookie("username");
+</script>
+
+
+<button id="submitBtn" class="server2" style="display:none;">Absensi Pulang</button>
+<script>
+document.getElementById("submitBtn").addEventListener("click", function(e) {
+    const now = new Date();
+    const hour = now.getHours();
+
+    if (hour < 17) {
+        e.preventDefault();
+         Swal.fire({
+            position: 'top-end',
+            icon: 'warning',
+            title: 'Absensi Pulang dilakukan setelah jam 17:00 wib',
+            showConfirmButton: false,
+            timer: 4000
+})
+       
+    } else {
+         Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: 'Terima kasih, Absensi Pulang Berhasil di Proses !',
+            showConfirmButton: false,
+            timer: 3000
+})
+    }
+});
+
+function waktuIndonesia(){
+
+    const hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+    const bulan = ["Januari","Februari","Maret","April","Mei","Juni",
+                   "Juli","Agustus","September","Oktober","November","Desember"];
+
+    const sekarang = new Date();
+
+    let h = hari[sekarang.getDay()];
+    let t = sekarang.getDate();
+    let b = bulan[sekarang.getMonth()];
+    let th = sekarang.getFullYear();
+
+    let jam = String(sekarang.getHours()).padStart(2,'0');
+    let menit = String(sekarang.getMinutes()).padStart(2,'0');
+    let detik = String(sekarang.getSeconds()).padStart(2,'0');
+
+    document.getElementById("jam").innerHTML =
+        h + ", " + t + " " + b + " " + th + "<br>" +"pkl. " +
+        jam + ":" + menit + ":" + detik + " wib";
+}
+
+setInterval(waktuIndonesia,1000);
+</script>
+
+</head>
+
+<script>
+function updateMenuByTime() {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+
+    const absenMasuk = document.getElementById("AbsenMasuk");
+    const absenPulang = document.getElementById("AbsenPulang");
+
+    // Jika sudah jam 16:00 ke atas
+    if (hours >= 12) {
+        absenMasuk.style.display = "none";
+        absenPulang.style.display = "block";
+    } else {
+        absenMasuk.style.display = "block";
+        absenPulang.style.display = "none";
+    }
+}
+
+// jalankan saat halaman dibuka
+updateMenuByTime();
+
+// optional: cek ulang tiap 1 menit
+setInterval(updateMenuByTime, 60000);
+</script>
+
+<div class="top-bar">
+    <div id="jam" class="text-kecil"></div>
+
+    <div style="display:flex; align-items:center; gap:10px;">
+        <div id="infoBelumHadir" class="text-kecil" style="
+            padding:8px;
+            background:#fff3cd;
+            border:1px solid #ffeeba;
+            border-radius:8px;
+            color:#856404;
+        ">
+            Jumlah Kehadiran: 0
+        </div>
+
+        <!-- SEARCH PINDAH KE SINI -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Cari nama...">
+            <span class="icon"></span>
+        </div>
+    </div>
+</div>
+
+<div class="running-text">
+    <div class="running-content">
+         Pengajuan Lembur sudah bisa dilakukan pada Menu "Absen Pulang" &nbsp;&nbsp;&nbsp; • &nbsp;&nbsp;&nbsp;
+         Pastikan data absensi sudah benar sebelum logout &nbsp;&nbsp;&nbsp; • &nbsp;&nbsp;&nbsp;
+       
+    </div>
+</div>
+
+<div class="table-container">
+<table>
+
+<thead>
+<tr>
+<th style="text-align:center; vertical-align:middle;">No.</th>
+<th style="text-align:center; vertical-align:middle; height:50; width:50; object-fit:cover">Photo</th>
+<th style="text-align:center; vertical-align:middle;">Nama</th>
+<th style="text-align:center; vertical-align:middle;">Jam Masuk Kerja</th>
+<th style="text-align:center; vertical-align:middle;">Keterangan</th>
+<th style="text-align:center; vertical-align:middle;">Jam Selesai Kerja</th>
+<th style="text-align:center; vertical-align:middle;">Lembur Hari Ini</th>
+
+
+</tr>
+</thead>
+<div id="modalFoto" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="imgPreview">
+</div>
+<tbody id="isiData">
+</tbody>
+<script>
+    function previewFoto(src){
+    const modal = document.getElementById("modalFoto");
+    const img = document.getElementById("imgPreview");
+
+    modal.style.display = "block";
+    img.src = src;
+}
+
+// tombol close
+document.querySelector(".close").onclick = function() {
+    document.getElementById("modalFoto").style.display = "none";
+}
+
+// klik area luar untuk tutup
+window.onclick = function(event) {
+    const modal = document.getElementById("modalFoto");
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+<script type="module">
+
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  
+  // Your web app's Firebase configuration
+            const firebaseConfig = {
+           
+            apiKey: "AIzaSyCllT1xEA0kLnT2ceLkQgNrhSsAbvUkaxo",
+            authDomain: "item-pekerjaan-84734.firebaseapp.com",
+            databaseURL: "https://item-pekerjaan-84734-default-rtdb.firebaseio.com",
+            projectId: "item-pekerjaan-84734",
+            storageBucket: "item-pekerjaan-84734.firebasestorage.app",
+            messagingSenderId: "1090276765966",
+            appId: "1:1090276765966:web:8eea263c163d81aa45a75f",
+            measurementId: "G-TKNH3Y5C3X"
+            };
+
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const now = new Date();
+const pukul = "pkl. ";
+const wib = " .wib";
+const tanggal = now.getDate()+String(new Date().getMonth() + 1).padStart(2,'0')+now.getFullYear();
+let currentPage = 1;
+let rowsPerPage = 10; // jumlah data per halaman
+let allData = [];
+let filteredData = [];
+const tanggaldisplay = "27042026";
+
+
+document.getElementById("searchInput").addEventListener("keyup", function() {
+    let filter = this.value.toLowerCase();
+
+    filteredData = allData.filter(item => 
+        item.nama.toLowerCase().includes(filter)
+    );
+
+    currentPage = 1; // reset ke halaman awal
+    renderTable();
+});
+
+const dbBelumRef = ref(db, "absen/"+tanggal);
+
+onValue(dbBelumRef, (snapshot) => {
+    const data = snapshot.val();
+
+    if (!data) {
+        document.getElementById("infoBelumHadir").innerHTML =
+            "Jumlah Kehadiran: 0";
+        return;
+    }
+
+    // hitung jumlah nama
+    const jumlah = Object.keys(data).length;
+
+    document.getElementById("infoBelumHadir").innerHTML =
+        "Jumlah Kehadiran: " + jumlah;
+});
+
+
+
+const dbRef = ref(db, "absen/"+tanggal);
+
+onValue(dbRef, (snapshot) => {
+
+    const data = snapshot.val();
+
+    if (!data) {
+        document.getElementById("isiData").innerHTML = `
+        <tr>
+            <td colspan="5" style="text-align:center; padding:10px;">
+                Data Belum Tersedia !
+            </td>
+        </tr>`;
+        return;
+    }
+
+    // 🔥 PINDAHKAN KE SINI
+    allData = Object.values(data);
+
+    // 🔥 SORT BERDASARKAN JAM MASUK (TERKECIL DI ATAS)
+    allData.sort((a, b) => {
+        // kalau kosong, taruh di bawah
+        if (!a.waktu) return 1;
+        if (!b.waktu) return -1;
+
+        return a.waktu.localeCompare(b.waktu);
+    });
+
+filteredData = allData;
+    currentPage = 1;
+
+    renderTable();
+});
+
+    function renderTable() {
+
+    let start = (currentPage - 1) * rowsPerPage;
+   let end = start + rowsPerPage;
+   let paginatedData = filteredData.slice(start, end);
+
+    let html = "";
+    let no = start + 1;
+
+    paginatedData.forEach(item => {
+        html += `
+        <tr>
+         <td style="text-align:center;">${no}</td>
+         <td style='text-align:center;'>
+            <img src="${item.photo}" class="photoTable" onclick="previewFoto(this.src)">
+         </td>
+         <td style='text-align:center;'>${item.nama}</td>
+         <td style='text-align:center;'>
+            <span class="badge ${!item.waktu ? "tidak-hadir" : "masuk"}">
+                ${item.waktu ? item.waktu : "Tidak Hadir"}
+            </span>
+        </td>
+<td style='text-align:center;'>
+    <span class="ket ${
+        item.keterangan === "Tepat Waktu" ? "tepat" :
+        item.keterangan === "Terlambat" ? "terlambat" : ""
+    }">
+        ${item.keterangan}
+    </span>
+</td>
+<td style='text-align:center;'>
+    <span class="badge ${item.pulang === "-" ? "belum" : "pulang"}">
+        ${item.pulang === "-" ? "- " : item.pulang}
+    </span>
+</td>
+
+<td style='text-align:center;'>${item.mulailembur}</td>
+        </tr>
+        `;
+        no++;
+    });
+
+    document.getElementById("isiData").innerHTML = html;
+
+    renderPagination();
+}
+
+function renderPagination() {
+
+   const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+
+   let html = `
+    <button class="btn-prev" onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>Prev</button>
+    Halaman ${currentPage} / ${totalPages}
+    <button class="btn-next" onclick="nextPage()" ${currentPage === totalPages ? "disabled" : ""}>Next</button>
+`;
+
+    document.getElementById("pagination").innerHTML = html;
+}
+
+function nextPage() {
+    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        renderTable();
+    }
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+    }
+}
+
+window.nextPage = function() {
+    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        renderTable();
+    }
+}
+
+window.prevPage = function() {
+    if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+    }
+}
+</script>
+
+</table>
+<div id="pagination" style="margin-top:8px; text-align:center;"></div>
+
+</body>
+</html>

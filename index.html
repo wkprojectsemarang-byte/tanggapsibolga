@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<title>Tanggap Sibolga</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: url('https://res.cloudinary.com/dzcn2tukg/image/upload/v1776419805/Sibolga_Pulau_Sumtera_vmzku4.png') no-repeat center;
+    background-size:cover;
+}
+
+/* efek blur background */
+.overlay{
+    position:absolute;
+    width:100%;
+    height:100%;
+    backdrop-filter: blur(6px);
+    background: rgba(0,0,0,0.3);
+}
+
+/* card login */
+.login-container{
+    position:relative;
+    z-index:2;
+    width:90%;
+    max-width:350px;
+}
+
+.login-box{
+    background: rgba(255,255,255,0.15);
+    border-radius:16px;
+    padding:30px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    color:white;
+    text-align:center;
+    animation: fadeIn 0.8s ease;
+}
+
+.login-box h2{
+    margin-bottom:20px;
+}
+
+/* input modern */
+.input-group{
+    position:relative;
+    margin:15px 0;
+}
+
+.input-group input{
+    width:100%;
+    padding:12px;
+    border:none;
+    outline:none;
+    border-radius:8px;
+    background: rgba(255,255,255,0.2);
+    color:white;
+    font-size:14px;
+}
+
+.input-group input::placeholder{
+    color:#ddd;
+}
+
+/* button */
+.btn-login{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border:none;
+    border-radius:8px;
+    background: linear-gradient(135deg,#00AAFF,#007BFF);
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn-login:hover{
+    transform:scale(1.05);
+    background: linear-gradient(135deg,#008ecc,#0056cc);
+}
+
+/* animasi */
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* responsive kecil */
+@media(max-width:400px){
+    .login-box{
+        padding:20px;
+    }
+}
+
+::placeholder {
+    color: #ffffff;
+    opacity: 1;
+}
+
+/* Supaya support semua browser */
+::-webkit-input-placeholder {
+    color: rgba(255,255,255,0.8);
+}
+:-ms-input-placeholder {
+    color: rgba(255,255,255,0.8);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="overlay"></div>
+
+<div class="login-container">
+    <div class="login-box">
+       <div style="display:flex; align-items:center; justify-content:center; gap:19px; text-align:center;">
+            <img src="https://res.cloudinary.com/dwzjlkkah/image/upload/v1777179447/wika_download_hnmptr.png" 
+                alt="Logo" 
+                style="width:50px; height:auto;">
+            
+            <h2 style="margin:0;">Login</h2>
+        </div>
+
+        <div class="input-group">
+            <input type="email" id="email" placeholder="Email">
+        </div>
+
+        <div class="input-group">
+    <input type="password" id="password" placeholder="Password">
+        </div>
+        
+        <div style="text-align:left; font-size:14px;">
+            <input type="checkbox" onclick="togglePassword()"> Tampilkan Password
+        </div>
+
+        <button onclick="login()" class="btn-login">Login</button>
+
+<p style="margin-top:15px; font-size:14px;">
+    Belum punya akun? 
+    <a href="register.html" style="color:#00c6ff; text-decoration:none; font-weight:600;">
+        Register
+    </a>
+</p>
+    </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyCllT1xEA0kLnT2ceLkQgNrhSsAbvUkaxo",
+    authDomain: "item-pekerjaan-84734.firebaseapp.com",
+    databaseURL: "https://item-pekerjaan-84734-default-rtdb.firebaseio.com",
+    projectId: "item-pekerjaan-84734",
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+function login(){
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if(!email || !password){
+        alert("Harap isi email dan password!");
+        return;
+    }
+
+    auth.signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+        const uid = userCredential.user.uid;
+
+        return db.ref("users/" + uid).once("value");
+    })
+    .then((snapshot) => {
+        const data = snapshot.val();
+
+        if(data){
+            localStorage.setItem("username", data.username);
+            localStorage.setItem("email", data.email);
+        }
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Login Berhasil!',
+            text: 'Aplikasi Tanggap Darurat Sibolga ',
+            showConfirmButton: false,
+            timer: 2500
+        }).then(() => {
+            window.location.href = "home.html";
+        });
+    })
+    .catch((error) => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Login Gagal',
+            text: error.message
+        });
+    });
+}
+</script>
+<script>
+function togglePassword(){
+    const password = document.getElementById("password");
+    if(password.type === "password"){
+        password.type = "text";
+    } else {
+        password.type = "password";
+    }
+}
+</script>
+</body>
+</html>

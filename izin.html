@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Form Izin</title>
+
+<style>
+*{
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body{
+    margin:0;
+    background: linear-gradient(135deg, #2196F3, #21CBF3);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.container{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    width:100%;
+    max-width:400px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    animation:fadeIn 0.5s ease;
+}
+
+h3{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+label{
+    font-size:14px;
+    font-weight:bold;
+}
+
+input, select, textarea{
+    width:100%;
+    padding:12px;
+    margin-top:5px;
+    margin-bottom:15px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    outline:none;
+    transition:0.3s;
+}
+
+input:focus, select:focus, textarea:focus{
+    border-color:#2196F3;
+    box-shadow:0 0 5px rgba(33,150,243,0.5);
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#2196F3;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#1976D2;
+}
+
+a{
+    display:block;
+    text-align:center;
+    margin-top:15px;
+    text-decoration:none;
+    color:#2196F3;
+    font-weight:bold;
+}
+
+a:hover{
+    text-decoration:underline;
+}
+
+/* Animasi */
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* Responsive tambahan */
+@media (max-width:500px){
+    body{
+        padding:10px;
+        height:auto;
+    }
+    .container{
+        margin-top:30px;
+    }
+}
+
+.home-btn{
+    position:fixed;
+    top:15px;
+    left:15px;
+    background:white;
+    color:#2196F3;
+    padding:8px 15px;
+    border-radius:20px;
+    text-decoration:none;
+    font-weight:bold;
+    box-shadow:0 5px 10px rgba(0,0,0,0.2);
+    transition:0.3s;
+}
+
+.home-btn:hover{
+    background:#2196F3;
+    color:white;
+}
+</style>
+</head>
+
+<body>
+
+    <a href="home.html" class="home-btn">Home</a>
+<div class="container">
+    <h3>Form Izin</h3>
+
+    <label>Nama</label>
+    <input type="text" id="nama" readonly>
+
+    <label>Jenis Izin</label>
+    <select id="jenis">
+        <option value="">-- Pilih --</option>
+        <option value="Izin Sakit">Izin Sakit</option>
+        <option value="Izin Keperluan">Izin Keperluan</option>
+        <option value="Lainnya">Lainnya</option>
+    </select>
+
+    <button onclick="kirimData()">Proses</button>
+
+    <a href="izintabel.html">← Kembali</a>
+</div>
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+ 
+            apiKey: "AIzaSyCllT1xEA0kLnT2ceLkQgNrhSsAbvUkaxo",
+            authDomain: "item-pekerjaan-84734.firebaseapp.com",
+            databaseURL: "https://item-pekerjaan-84734-default-rtdb.firebaseio.com",
+            projectId: "item-pekerjaan-84734",
+           
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ambil nama
+const nama = localStorage.getItem("nama");
+document.getElementById("nama").value = nama;
+
+window.kirimData = function(){
+
+    const jenis = document.getElementById("jenis").value;
+
+    if(jenis === ""){
+        alert("Pilih jenis izin dulu!");
+        return;
+    }
+
+    const now = new Date();
+
+    const namabulan = [
+        "Januari","Februari","Maret","April","Mei","Juni",
+        "Juli","Agustus","September","Oktober","November","Desember"
+    ];
+
+    const bulan = namabulan[now.getMonth()];
+    const tampilanBulan = now.getDate() + " " + bulan + " " + now.getFullYear();
+
+    const tanggalKey = now.getDate()+String(new Date().getMonth() + 1).padStart(2,'0')+now.getFullYear();
+
+    const imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSosCjg0DblIawJgK-19IeqxlOck6TdU_EJHQ&s";
+    const tidakmasuk ="Tidak Hadir";
+
+    // ✅ SIMPAN SESUAI PATH YANG DIINGINKAN
+    set(ref(db, "izin/" + tanggalKey + "/" + nama), {
+        photo: imageUrl,
+        waktu: tidakmasuk,
+        date: tanggalKey,
+        nama: nama,
+        tanggal: tampilanBulan,
+        pulang: jenis
+    });
+
+     set(ref(db, "periode/"+nama+"/"+tanggalKey), {
+        photo: imageUrl,
+        waktu: tidakmasuk,
+        date: tanggalKey,
+        nama: nama,
+        tanggal: tampilanBulan,
+        pulang: jenis
+    });
+
+ set(ref(db, "absen/"+tanggalKey+"/"+nama), {
+        photo: imageUrl,
+        waktu: tidakmasuk,
+        date: tanggalKey,
+        nama: nama,
+        tanggal: tampilanBulan,
+        pulang: jenis
+    });
+
+   set(ref(db, "backup/"+tanggalKey+"/"+nama), {
+        photo: imageUrl,
+        waktu: tidakmasuk,
+        date: tanggalKey,
+        nama: nama,
+        tanggal: tampilanBulan,
+        pulang: jenis
+    });
+
+    alert("Data izin berhasil Proses!");
+}
+</script>
+
+</body>
+</html>

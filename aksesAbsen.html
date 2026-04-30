@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+<p id="nama"></p>
+<p id="tanggal"></p>
+
+
+</head>
+
+
+
+<body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+const firebaseConfig = {
+            apiKey: "AIzaSyCllT1xEA0kLnT2ceLkQgNrhSsAbvUkaxo",
+            authDomain: "item-pekerjaan-84734.firebaseapp.com",
+            databaseURL: "https://item-pekerjaan-84734-default-rtdb.firebaseio.com",
+            projectId: "item-pekerjaan-84734",
+            storageBucket: "item-pekerjaan-84734.firebasestorage.app",
+            messagingSenderId: "1090276765966",
+            appId: "1:1090276765966:web:8eea263c163d81aa45a75f",
+            measurementId: "G-TKNH3Y5C3X"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ambil username dari localStorage
+const nama = localStorage.getItem("username");
+
+// buat tanggal (24032026)
+const now = new Date();
+const tanggal = now.getDate().toString().padStart(2,'0') +
+                (now.getMonth() + 1).toString().padStart(2,'0') +
+                now.getFullYear();
+
+// ambil data dari Firebase
+db.ref("absen/"+tanggal+"/"+nama).once("value", function(snapshot){
+
+    const data = snapshot.val();
+
+    if(data){
+        // tampilkan nama ke HTML
+        document.getElementById("nama").innerHTML = data.nama;
+     
+        // ALERT jika data sudah ada
+        Swal.fire({
+            icon: "info",
+            title: "Absensi Pulang",
+            text: "pilih Proses untuk melanjutkan..",
+            showCancelButton: true,
+            confirmButtonText: "Proses",
+            cancelButtonText: "Kembali"
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                // pindah halaman
+                window.location.href = "checkAbsenPulang.html";
+                
+            } else {
+                // bisa ke halaman lain juga
+                window.location.href = "home.html";
+            }
+        });
+
+    }else{
+    // ❌ jika data BELUM ADA
+
+    if(nama){
+        const hurufAwal = nama.charAt(0).toUpperCase();
+
+        if(hurufAwal >= 'A' && hurufAwal <= 'D'){
+            // A - D
+            window.location.href = "uploadphoto5.html";
+        }else if(hurufAwal >= 'F' && hurufAwal <= 'P'){
+            // F - P
+            window.location.href = "uploadphoto6.html";
+        }else{
+            // Q - Z
+            window.location.href = "uploadphoto7.html";
+        }
+
+    }else{
+        // kalau username kosong
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Username tidak ditemukan!"
+        });
+    }
+}
+
+});
+</script>
+
+
+
+</body>
+</html>

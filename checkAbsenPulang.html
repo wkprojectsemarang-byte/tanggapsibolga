@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Absensi Pulang</title>
+<style>
+body{
+font-family:Arial;
+background:#f2f2f2;
+text-align:center;
+}
+
+.container{
+max-width:400px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.preview{
+margin:15px 0;
+}
+
+.preview img{
+width:100%;
+max-height:250px;
+object-fit:cover;
+border-radius:8px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    background:linear-gradient(135deg,#00aaff,#0077cc);
+    color:white;
+    font-size:16px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.03);
+}
+
+#btnLembur{
+    background:linear-gradient(135deg,#28a745,#1e7e34);
+}
+</style>
+</head>
+
+<p id="nama"></p>
+
+<body>
+    <div class="container">
+<button onclick="absenPulang()">Absen Pulang</button>
+
+<button id="btnLembur" onclick="ajukanLembur()" style="display:none; margin-top:10px; background:#28a745;">
+    Ajukan Lembur
+</button>
+
+<br><br>
+ <a href="home.html" style="font-size:20px;">Kembali</a>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyCllT1xEA0kLnT2ceLkQgNrhSsAbvUkaxo",
+    authDomain: "item-pekerjaan-84734.firebaseapp.com",
+    databaseURL: "https://item-pekerjaan-84734-default-rtdb.firebaseio.com",
+    projectId: "item-pekerjaan-84734",
+    storageBucket: "item-pekerjaan-84734.firebasestorage.app",
+    messagingSenderId: "1090276765966",
+    appId: "1:1090276765966:web:8eea263c163d81aa45a75f"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase.database();
+
+function formatTanggal(now){
+    return now.getDate().toString().padStart(2,'0') +
+           (now.getMonth()+1).toString().padStart(2,'0') +
+           now.getFullYear();
+}
+
+function getWIB(now){
+    return new Intl.DateTimeFormat('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    }).format(now) + " WIB";
+}
+
+function absenPulang(){
+    const now = new Date();
+    const hour = new Date().getHours();
+    const tanggal = formatTanggal(now);
+    const nama = localStorage.getItem("username");
+
+    if (!nama){
+        Swal.fire("Error","Username tidak ditemukan","error");
+        return;
+    }
+
+    // validasi jam
+    if(hour < 16){
+        Swal.fire({
+            icon:"warning",
+            title:"Belum waktunya pulang!",
+            text:"Absensi hanya bisa setelah jam 17:00 WIB"
+        });
+        return;
+    }
+
+    db.ref("absen/" + tanggal + "/" + nama).once("value", snap => {
+        if(!snap.exists()){
+            Swal.fire("Error","Data tidak ditemukan","error");
+            return;
+        }
+
+        const data = snap.val();
+
+        const updateData = {
+            ...data,
+            pulang: getWIB(now)
+        };
+
+        db.ref("absen/" + tanggal + "/" + nama).update(updateData);
+        db.ref("periode/" + nama + "/" + tanggal).update(updateData);
+
+        Swal.fire({
+            icon:"success",
+            title:"Absen Pulang Berhasil",
+            text:"Silakan ajukan lembur jika perlu"
+        });
+
+        // 🔥 UI UPDATE
+        document.querySelector("button[onclick='absenPulang()']").style.display = "none";
+        document.getElementById("btnLembur").style.display = "block";
+    });
+}
+
+function ajukanLembur(){
+
+    const now = new Date(); // HARUS di atas
+
+    const namabulan = [
+        "Januari","Februari","Maret","April","Mei","Juni",
+        "Juli","Agustus","September","Oktober","November","Desember"
+    ];
+
+    const bulan = namabulan[now.getMonth()];
+    const tanggal = formatTanggal(now);
+    const nama = localStorage.getItem("username");
+    const tampilanBulan = now.getDate() + " " + bulan + " " + now.getFullYear();
+
+    if(!nama){
+        Swal.fire("Error","Username tidak ditemukan","error");
+        return;
+    }
+
+    const data = {
+        nama: nama,
+        tanggal: tanggal,
+        mulai: getWIB(now),
+        date : tampilanBulan,
+        selesai: "-"
+    };
+
+    db.ref("lembur/" + tanggal + "/" + nama).set(data);
+    db.ref("periodelembur/" + nama + "/" + tanggal).set(data);
+    db.ref("backuplembur/" + tanggal + "/" + nama).set(data);
+
+    Swal.fire("Berhasil","Lembur diajukan","success");
+}
+</script>
+
+</body>
+</html>
+
+
+ 

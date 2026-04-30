@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<title>Register - Tanggap Sibolga</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: url('https://res.cloudinary.com/dzcn2tukg/image/upload/v1776419805/Sibolga_Pulau_Sumtera_vmzku4.png') no-repeat center;
+    background-size:cover;
+}
+
+.overlay{
+    position:absolute;
+    width:100%;
+    height:100%;
+    backdrop-filter: blur(6px);
+    background: rgba(0,0,0,0.3);
+}
+
+.container{
+    position:relative;
+    z-index:2;
+    width:90%;
+    max-width:350px;
+}
+
+.box{
+    background: rgba(255,255,255,0.15);
+    border-radius:16px;
+    padding:30px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    color:white;
+    text-align:center;
+}
+
+.input-group{
+    margin:15px 0;
+}
+
+.input-group input{
+    width:100%;
+    padding:12px;
+    border:none;
+    outline:none;
+    border-radius:8px;
+    background: rgba(255,255,255,0.2);
+    color:white;
+}
+
+.btn{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border:none;
+    border-radius:8px;
+    background: linear-gradient(135deg,#00AAFF,#007BFF);
+    color:white;
+    cursor:pointer;
+}
+
+::placeholder {
+    color: rgba(255,255,255,0.8);
+}
+
+/* Supaya support semua browser */
+::-webkit-input-placeholder {
+    color: rgba(255,255,255,0.8);
+}
+:-ms-input-placeholder {
+    color: rgba(255,255,255,0.8);
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay"></div>
+
+<div class="container">
+    <div class="box">
+        <h2>Register</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Masukkan Nama">
+        </div>
+
+        <div class="input-group">
+            <input type="email" id="email" placeholder="Email">
+        </div>
+
+        <div class="input-group">
+    <input type="password" id="password" placeholder="Password">
+        </div>
+        
+        <div style="text-align:left; font-size:14px;">
+            <input type="checkbox" onclick="togglePassword()"> Tampilkan Password
+        </div>
+
+        <button onclick="register()" class="btn">Daftar</button>
+
+        <p style="margin-top:10px;">
+            Sudah punya akun? <a href="index.html" style="color:#fff;">Login</a>
+        </p>
+    </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+const firebaseConfig = {
+   apiKey: "AIzaSyCllT1xEA0kLnT2ceLkQgNrhSsAbvUkaxo",
+    authDomain: "item-pekerjaan-84734.firebaseapp.com",
+    databaseURL: "https://item-pekerjaan-84734-default-rtdb.firebaseio.com",
+    projectId: "item-pekerjaan-84734",
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+function register(){
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if(!username || !email || !password){
+        alert("Harap isi semua data!");
+        return;
+    }
+
+    if(password.length < 6){
+        alert("Password minimal 6 karakter!");
+        return;
+    }
+
+    auth.createUserWithEmailAndPassword(email, password)
+.then((userCredential) => {
+
+    const uid = userCredential.user.uid;
+
+    // Simpan ke database
+    return db.ref("users/" + uid).set({
+        username: username,
+        email: email
+    });
+
+})
+.then(() => {
+           Swal.fire({
+            icon: 'success',
+            title: 'Sukses!',
+            text: 'Registrasi berhasil!',
+            confirmButtonColor: '#007BFF'
+        }).then(() => {
+            window.location.href = "index.html";
+        });
+})
+.catch((error) => {
+    console.error(error);
+        Swal.fire({
+        icon: 'error',
+        title: 'Gagal',
+        text: error.message
+    });
+});
+}
+</script>
+<script>
+function togglePassword(){
+    const password = document.getElementById("password");
+    if(password.type === "password"){
+        password.type = "text";
+    } else {
+        password.type = "password";
+    }
+}
+</script>
+
+</body>
+</html>
