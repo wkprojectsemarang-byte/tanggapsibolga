@@ -107,27 +107,18 @@ function getWIB(now){
 }
 
 function absenPulang(){
+
     const now = new Date();
-    const hour = new Date().getHours();
     const tanggal = formatTanggal(now);
     const nama = localStorage.getItem("username");
 
-    if (!nama){
+    if(!nama){
         Swal.fire("Error","Username tidak ditemukan","error");
         return;
     }
 
-    // validasi jam
-    if(hour < 16){
-        Swal.fire({
-            icon:"warning",
-            title:"Belum waktunya pulang!",
-            text:"Absensi hanya bisa setelah jam 17:00 WIB"
-        });
-        return;
-    }
-
     db.ref("absen/" + tanggal + "/" + nama).once("value", snap => {
+
         if(!snap.exists()){
             Swal.fire("Error","Data tidak ditemukan","error");
             return;
@@ -135,8 +126,21 @@ function absenPulang(){
 
         const data = snap.val();
 
+        // CEK SUDAH ABSEN
+            if(data.pulang && data.pulang !== "-"){
+            Swal.fire({
+                icon: "warning",
+                title: "Sudah Absen!",
+                text: "Anda sudah melakukan absen pulang Hari Ini !!"
+            }).then(() => {
+                window.location.href = "home.html";
+            });
+            return;
+        }
+
         const updateData = {
             ...data,
+            mulailembur: getWIB(now),
             pulang: getWIB(now)
         };
 
@@ -149,15 +153,15 @@ function absenPulang(){
             text:"Silakan ajukan lembur jika perlu"
         });
 
-        // 🔥 UI UPDATE
         document.querySelector("button[onclick='absenPulang()']").style.display = "none";
         document.getElementById("btnLembur").style.display = "block";
+
     });
 }
 
 function ajukanLembur(){
 
-    const now = new Date(); // HARUS di atas
+    const now = new Date();
 
     const namabulan = [
         "Januari","Februari","Maret","April","Mei","Juni",
@@ -174,19 +178,39 @@ function ajukanLembur(){
         return;
     }
 
-    const data = {
-        nama: nama,
-        tanggal: tanggal,
-        mulai: getWIB(now),
-        date : tampilanBulan,
-        selesai: "-"
-    };
+    // 🔥 CEK DULU DATA LEMBUR
+    db.ref("lembur/" + tanggal + "/" + nama).once("value", snap => {
 
-    db.ref("lembur/" + tanggal + "/" + nama).set(data);
-    db.ref("periodelembur/" + nama + "/" + tanggal).set(data);
-    db.ref("backuplembur/" + tanggal + "/" + nama).set(data);
+        if(snap.exists()){
+            // ❌ kalau sudah ada
+            Swal.fire({
+                icon: "warning",
+                title: "Sudah Mengajukan Lembur!",
+                text: "Anda sudah mengajukan lembur Hari Ini !!"
+                 }).then(() => {
+        window.location.href = "home.html";
+            });
+            return;
+        }
 
-    Swal.fire("Berhasil","Lembur diajukan","success");
+        // ✅ kalau belum ada, lanjut simpan
+        const data = {
+            nama: nama,
+            tanggal: tanggal,
+            date: tampilanBulan,
+            mulailembur: getWIB(now),
+            selesailembur: "-",
+            selesai: "-"
+        };
+
+        db.ref("lembur/" + tanggal + "/" + nama).set(data);
+        db.ref("backup/" + tanggal + "/" + nama).set(data);
+        db.ref("periodelembur/" + nama + "/" + tanggal).set(data);
+        db.ref("backuplembur/" + tanggal + "/" + nama).set(data);
+
+        Swal.fire("Berhasil","Lembur diajukan","success");
+        document.getElementById("btnLembur").style.display = "none";
+    });
 }
 </script>
 
