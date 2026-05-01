@@ -357,7 +357,7 @@ style="margin-bottom:10px; padding:8px; width:100%; max-width:200px;">
    let username = localStorage.getItem("username");
 
    // daftar user yang diizinkan
-   let allowedUsers = ["Nurhakiki", "Henri Yuliansyah"];
+   let allowedUsers = ["Nurhakiki", "Henri Yuliansyah", "Sultan"];
 
    // cek apakah username termasuk
    if (allowedUsers.includes(username)) {
@@ -369,9 +369,10 @@ style="margin-bottom:10px; padding:8px; width:100%; max-width:200px;">
 <thead>
 <tr>
 <th style="text-align:center; vertical-align:middle;">No.</th>
-<th style="text-align:center; vertical-align:middle;">Tanggal</th>
 <th style="text-align:center; vertical-align:middle;">Nama</th>
+<th style="text-align:center; vertical-align:middle;">Tanggal Lembur</th>
 <th style="text-align:center; vertical-align:middle;">Jam Mulai Lembur</th>
+<th style="text-align:center; vertical-align:middle;">Tanggal Selesai Lembur</th>
 <th style="text-align:center; vertical-align:middle;">Jam Selesai Lembur</th>
 
 </tr>
@@ -435,10 +436,12 @@ window.downloadExcel = function () {
     let dataExcel = allData.map((item, index) => {
         return {
             No: index + 1,
-            Tanggal: item.date || "-",
-            Nama: item.nama || "-",
-            "Jam Masuk": item.waktu || "-",
-            "Jam Pulang": item.pulang || "-"
+             Nama: item.nama || "-",
+            Tanggal: item.tanggal || "-",
+             Mulai: item.mulailembur || "-",
+           TanggalSelesai: item.tanggalselesai || "-",
+             Selesai: item.selesailembur || "-",
+           
         };
     });
 
@@ -521,19 +524,19 @@ onValue(dbRef, (snapshot) => {
         html += `
         <tr>
          <td style="text-align:center;">${no}</td>
-          <td style='text-align:center;'>${item.date}</td>
          <td style='text-align:center;'>${item.nama}</td>
+         <td style='text-align:center;'>${item.tanggal}</td>
          <td style='text-align:center;'>
     <span class="badge masuk">
-        ${item.mulai
- ? item.mulai
+        ${item.mulailembur
+ ? item.mulailembur
  : "-"}
     </span>
 </td>
-
+<td style='text-align:center;'>${item.tanggalselesai}</td>
 <td style='text-align:center;'>
-    <span class="badge ${item.selesai === "-" ? "belum" : "pulang"}">
-        ${item.selesai === "-" ? "- " : item.selesai}
+    <span class="badge ${item.selesailembur === "-" ? "belum" : "pulang"}">
+        ${item.selesailembur === "-" ? "- " : item.selesailembur}
     </span>
 </td>
         </tr>

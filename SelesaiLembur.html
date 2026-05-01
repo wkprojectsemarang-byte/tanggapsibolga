@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Selesai Lembur</title>
+<style>
+body{
+font-family:Arial;
+background:#f2f2f2;
+text-align:center;
+}
+
+.container{
+max-width:400px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.preview{
+margin:15px 0;
+}
+
+.preview img{
+width:100%;
+max-height:250px;
+object-fit:cover;
+border-radius:8px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    background:linear-gradient(135deg,#00aaff,#0077cc);
+    color:white;
+    font-size:16px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.03);
+}
+
+#btnLembur{
+    background:linear-gradient(135deg,#28a745,#1e7e34);
+}
+</style>
+</head>
+
+<p id="nama"></p>
+
+<body>
+    <div class="container">
+<button onclick="selesaiLembur()">Selesai Lembur</button>
+
+<br><br>
+ <a href="home.html" style="font-size:20px;">Kembali</a>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyCllT1xEA0kLnT2ceLkQgNrhSsAbvUkaxo",
+    authDomain: "item-pekerjaan-84734.firebaseapp.com",
+    databaseURL: "https://item-pekerjaan-84734-default-rtdb.firebaseio.com",
+    projectId: "item-pekerjaan-84734",
+    storageBucket: "item-pekerjaan-84734.firebasestorage.app",
+    messagingSenderId: "1090276765966",
+    appId: "1:1090276765966:web:8eea263c163d81aa45a75f"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase.database();
+
+function formatTanggal(now){
+    return now.getDate().toString().padStart(2,'0') +
+           (now.getMonth()+1).toString().padStart(2,'0') +
+           now.getFullYear();
+}
+
+function getWIB(now){
+    return new Intl.DateTimeFormat('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    }).format(now) + " WIB";
+}
+
+function selesaiLembur(){
+
+    const nama = localStorage.getItem("username");
+    if(!nama){
+        Swal.fire("Error","Username tidak ditemukan","error");
+        return;
+    }
+
+    const now = new Date();
+
+    // format tanggal key (contoh: 01052026)
+    const tanggalKey = formatTanggal(now);
+
+    // format tampilan (contoh: 1 Mei 2026)
+    const bulanList = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+    const tampilanBulan = now.getDate() + " " + bulanList[now.getMonth()] + " " + now.getFullYear();
+
+    // ambil data lembur aktif
+    db.ref("lembur/Aktif/" + nama).once("value", snap => {
+
+        const data = snap.val();
+
+        if(!data){
+            Swal.fire("Error","Data lembur aktif tidak ditemukan","error");
+            return;
+        }
+
+        // ambil dari database
+        const dataAktif = {
+            nama: nama,
+            tanggal: data.tanggal,
+            mulailembur: data.mulailembur,
+            tanggalselesai: tampilanBulan,
+            selesailembur: getWIB(now)
+        };
+
+        // simpan ke riwayat lembur
+        db.ref("backuplembur/" + data.tanggal + "/" + nama).set(dataAktif)
+        .then(() => {
+
+            // hapus data aktif (opsional tapi disarankan)
+            db.ref("lembur/Aktif/" + nama).remove();
+
+            Swal.fire({
+                icon: "success",
+                title: "Berhasil",
+                text: "Lembur selesai dicatat"
+            }).then(() => {
+                window.location.href = "home.html";
+            });
+
+        })
+        .catch(err => {
+            Swal.fire("Error", err.message, "error");
+        });
+
+    });
+}
+
+
+</script>
+
+</body>
+</html>
+
+
+ 

@@ -195,38 +195,56 @@ function ajukanLembur(){
         return;
     }
 
-    // 🔥 CEK DULU DATA LEMBUR
+    // 🔥 CEK DATA SUDAH ADA ATAU BELUM
     db.ref("lembur/" + tanggal + "/" + nama).once("value", snap => {
 
         if(snap.exists()){
-            // ❌ kalau sudah ada
             Swal.fire({
                 icon: "warning",
                 title: "Sudah Mengajukan Lembur!",
                 text: "Anda sudah mengajukan lembur Hari Ini !!"
-                 }).then(() => {
-        window.location.href = "home.html";
+            }).then(() => {
+                window.location.href = "home.html";
             });
             return;
         }
 
-        // ✅ kalau belum ada, lanjut simpan
-        const data = {
+        // ✅ DATA TANPA ALASAN INPUT
+        const dataLembur = {
             nama: nama,
             tanggal: tanggal,
             date: tampilanBulan,
             mulailembur: getWIB(now),
             selesailembur: "-",
-            selesai: "-"
+            selesai: "-",
+            alasan: "-" // otomatis
         };
 
-        db.ref("lembur/" + tanggal + "/" + nama).set(data);
-        db.ref("backup/" + tanggal + "/" + nama).set(data);
-        db.ref("periodelembur/" + nama + "/" + tanggal).set(data);
-        db.ref("backuplembur/" + tanggal + "/" + nama).set(data);
+        db.ref("lembur/" + tanggal + "/" + nama).set(dataLembur);
+        db.ref("backup/" + tanggal + "/" + nama).set(dataLembur);
+        db.ref("periodelembur/" + nama + "/" + tanggal).set(dataLembur);
+        db.ref("backuplembur/" + tanggal + "/" + nama).set(dataLembur);
 
-        Swal.fire("Berhasil","Lembur diajukan","success");
-        document.getElementById("btnLembur").style.display = "none";
+        const dataAktif = {
+            nama: nama,
+            tanggalselesai: "-",
+            tanggal: tampilanBulan,
+            mulailembur: getWIB(now),
+            selesailembur: "-",
+          
+        };
+
+        db.ref("lembur/Aktif/" + nama ).set(dataAktif);
+
+        // 🔥 ALERT SUKSES TANPA INPUT + REDIRECT
+        Swal.fire({
+            icon: "success",
+            title: "Berhasil",
+            text: "Pengajuan lembur berhasil"
+        }).then(() => {
+            window.location.href = "home.html";
+        });
+
     });
 }
 </script>

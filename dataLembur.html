@@ -69,7 +69,7 @@ body{
 <body>
 
 <nav class="navbar">
-   <div class="logo">Data Kehadiran </div><br>
+   <div class="logo">Data Lembur </div><br>
   
    <div class="profile-menu">
       <img src="https://res.cloudinary.com/dzcn2tukg/image/upload/v1777191548/project_helmet_architect_constructor_builder_icon_255747_ekaypm.png" class="profile-img" onclick="toggleMenu()">
@@ -243,7 +243,7 @@ setInterval(waktuIndonesia,1000);
 <thead>
 <tr>
    <th style="text-align:center; vertical-align:middle;" >No.</th>
-   <th style="text-align:center; vertical-align:middle;">Perioede Tanggal Absen</th>
+   <th style="text-align:center; vertical-align:middle;">Perioede Tanggal Lembur</th>
    <th style="text-align:center; vertical-align:middle;">Tampilkan</th>
 
 </tr>
@@ -322,7 +322,7 @@ onValue(dbRef, (snapshot) => {
         html += `
         <tr>
             <td style="text-align:center;">${no}</td>
-            <td style="text-align:center;">${formatTanggal}</td>
+            <td style='text-align:center;'>${item.key}</td>
             <td style="text-align:center;">
                 <a href="PeriodeLembur.html?periode=${item.key}" target="_blank">
                     <button style="

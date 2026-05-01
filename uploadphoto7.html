@@ -199,24 +199,44 @@ border-radius:5px;
         const mulaiLembur = "-";
          const selesaiLembur = "-";
 
-     let keterangan;
+     // ambil angka asli (number)
+        const jamAngka = now.getHours();
+        const menitAngka = now.getMinutes();
 
-       const jam = String(now.getHours()).padStart(2, '0');
-        const menit = String(now.getMinutes()).padStart(2, '0');
+         // format 2 digit untuk tampilan
+        const jam = String(jamAngka).padStart(2, '0');
+        const menit = String(menitAngka).padStart(2, '0');
         const detik = String(now.getSeconds()).padStart(2, '0');
 
-        const waktuLengkap = jam + ":" + menit + ":" + detik + " wib";
-        
+              
 
-        // batas 08:15
-        if (jam > 8 || (jam === 8 && menit > 15)) {
+        const waktuLengkap = jam + ":" + menit + ":" + detik + " wib";
+       
+       
+        let keterangan;
+
+                // logika pakai ANGKA, bukan string
+        if (jamAngka > 8 || (jamAngka === 8 && menitAngka > 15)) {
             keterangan = "Terlambat";
         } else {
             keterangan = "Tepat Waktu";
         }
 
+
          // SIMPAN KE FIREBASE
     firebase.database().ref("absen/"+tanggal+"/"+nama).update({
+       photo: imageUrl,
+        waktu: waktuLengkap,
+        date: tampilanBulan,
+        nama : nama,
+        pulang : pulang,
+        mulailembur :mulaiLembur,
+        selesailembur : selesaiLembur,
+        keterangan : keterangan
+     
+    });
+
+    firebase.database().ref("backup/"+tanggal+"/"+nama).update({
        photo: imageUrl,
         waktu: waktuLengkap,
         date: tampilanBulan,

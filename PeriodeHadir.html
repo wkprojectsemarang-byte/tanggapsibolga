@@ -357,7 +357,7 @@ style="margin-bottom:10px; padding:8px; width:100%; max-width:200px;">
    let username = localStorage.getItem("username");
 
    // daftar user yang diizinkan
-   let allowedUsers = ["Nurhakiki", "Henri Yuliansyah"];
+   let allowedUsers = ["Nurhakiki", "Henri Yuliansyah", "Sultan"];
 
    // cek apakah username termasuk
    if (allowedUsers.includes(username)) {
@@ -373,6 +373,8 @@ style="margin-bottom:10px; padding:8px; width:100%; max-width:200px;">
 <th style="text-align:center; vertical-align:middle;">Nama</th>
 <th style="text-align:center; vertical-align:middle;">Jam Masuk Kerja</th>
 <th style="text-align:center; vertical-align:middle;">Jam Selesai Kerja</th>
+<th style="text-align:center; vertical-align:middle;">Keterangan</th>
+<th style="text-align:center; vertical-align:middle;">Lembur</th>
 
 </tr>
 </thead>
@@ -438,7 +440,9 @@ window.downloadExcel = function () {
             Tanggal: item.date || "-",
             Nama: item.nama || "-",
             "Jam Masuk": item.waktu || "-",
-            "Jam Pulang": item.pulang || "-"
+            "Jam Pulang": item.pulang || "-",
+             Keterangan : item.keterangan || "-",
+              Lembur : item.mulailembur || "-"
         };
     });
 
@@ -527,6 +531,7 @@ onValue(dbRef, (snapshot) => {
     <span class="badge masuk">
         ${item.waktu ? item.waktu : "-"}
     </span>
+   
 </td>
 
 <td style='text-align:center;'>
@@ -534,6 +539,8 @@ onValue(dbRef, (snapshot) => {
         ${item.pulang === "-" ? "- " : item.pulang}
     </span>
 </td>
+ <td style='text-align:center;'>${item.keterangan}</td>
+ <td style='text-align:center;'>${item.mulailembur}</td>
         </tr>
         `;
         no++;

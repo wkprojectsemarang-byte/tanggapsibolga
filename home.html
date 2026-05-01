@@ -391,7 +391,7 @@ button{
 .running-text {
     width: 100%;
     overflow: hidden;
-    background: linear-gradient(90deg, #59a5e480, #64b4f66c);
+    background: linear-gradient(90deg, #28dae0b4, #64c8f6c9);
     color: white;
     padding: 8px 0;
     border-radius: 8px;
@@ -421,6 +421,39 @@ button{
 .running-content:hover {
     animation-play-state: paused;
 }
+
+.btn-lembur {
+    display: none;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #ff7a18, #ff3d00);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Hover effect */
+.btn-lembur:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+/* Klik */
+.btn-lembur:active {
+    transform: scale(0.95);
+}
+
+/* Icon style (opsional kalau pakai emoji/icon) */
+.btn-lembur span {
+    font-size: 14px;
+}
 </style>
 </head>
 
@@ -439,6 +472,7 @@ button{
          <a href="profile.html">Profile <span id="user"></span></a>
          <a href="cekwaktu2.html" id="AbsenMasuk">Absen Kehadiran</a>
          <a href="checkAbsenPulang.html" id="AbsenPulang" style="display:none;">Absen Pulang</a>
+         
          <a href="dataAbsen.html">Data </a>
          <a href="passw.html">Ganti Password </a>
         <a href="izintabel.html" id="menuIzin" style="display:none;">Request Izin Karyawan</a>
@@ -567,9 +601,18 @@ updateMenuByTime();
 
 // optional: cek ulang tiap 1 menit
 setInterval(updateMenuByTime, 60000);
+
+
+
+
 </script>
 
 <div class="top-bar">
+    <a href="SelesaiLembur.html">
+    <button id="btnLembur" class="btn-lembur">
+         Selesai Lembur
+    </button>
+</a>
     <div id="jam" class="text-kecil"></div>
 
     <div style="display:flex; align-items:center; gap:10px;">
@@ -593,7 +636,7 @@ setInterval(updateMenuByTime, 60000);
 
 <div class="running-text">
     <div class="running-content">
-         Pengajuan Lembur sudah bisa dilakukan pada Menu "Absen Pulang" &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;
+         INFO PENTING : Tanggal 2 mei 2026 Acara selamatan di lokasi Sungai Tukka jam 07.00 WIB &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;
          Pastikan data absensi sudah benar sebelum logout &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;
        
     </div>
@@ -685,6 +728,36 @@ document.getElementById("searchInput").addEventListener("keyup", function() {
     currentPage = 1; // reset ke halaman awal
     renderTable();
 });
+
+// referensi lembur aktif
+
+const nama = localStorage.getItem("username");
+const lemburRef = ref(db, "lembur/Aktif/" + nama);
+
+// ambil elemen
+const btnLembur = document.querySelector(".top-bar button");
+const menuAbsen = document.getElementById("AbsenMasuk");
+
+onValue(lemburRef, (snapshot) => {
+    const data = snapshot.val();
+
+    if (data) {
+        // ✅ ADA lembur aktif
+        btnLembur.style.display = "inline-block";
+
+        // nonaktifkan menu absen
+        menuAbsen.style.pointerEvents = "none";
+        menuAbsen.style.opacity = "0.5";
+    } else {
+        // ❌ tidak ada lembur
+        btnLembur.style.display = "none";
+
+        // aktifkan kembali menu
+        menuAbsen.style.pointerEvents = "auto";
+        menuAbsen.style.opacity = "1";
+    }
+});
+
 
 const dbBelumRef = ref(db, "absen/"+tanggal);
 
