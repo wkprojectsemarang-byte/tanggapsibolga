@@ -109,7 +109,24 @@ function getWIB(now){
 function absenPulang(){
 
     const now = new Date();
-    const tanggal = formatTanggal(now);
+
+    // 🔥 VALIDASI JAM (WIB)
+    const jam = now.getHours();
+    const menit = now.getMinutes();
+    const totalMenit = jam * 60 + menit;
+
+    const batasPulang = 17 * 60; // 17:00 = 1020 menit
+
+    if(totalMenit < batasPulang){
+        Swal.fire({
+            icon: "warning",
+            title: "Belum Waktunya!",
+            text: "Absen pulang hanya bisa dilakukan setelah pukul 17:00 WIB"
+        });
+        return;
+    }
+
+    const tanggal = now.getDate()+String(new Date().getMonth() + 1).padStart(2,'0')+now.getFullYear();
     const nama = localStorage.getItem("username");
 
     if(!nama){
@@ -126,8 +143,7 @@ function absenPulang(){
 
         const data = snap.val();
 
-        // CEK SUDAH ABSEN
-            if(data.pulang && data.pulang !== "-"){
+        if(data.pulang && data.pulang !== "-"){
             Swal.fire({
                 icon: "warning",
                 title: "Sudah Absen!",
@@ -140,16 +156,17 @@ function absenPulang(){
 
         const updateData = {
             ...data,
-            mulailembur: getWIB(now),
+             mulailembur: getWIB(now),
             pulang: getWIB(now)
         };
 
         db.ref("absen/" + tanggal + "/" + nama).update(updateData);
         db.ref("periode/" + nama + "/" + tanggal).update(updateData);
+        db.ref("backup/" + tanggal + "/" + nama).update(updateData);
 
         Swal.fire({
             icon:"success",
-            title:"Absen Pulang Berhasil",
+            title:"INFO PENTING : Tanggal 2 mei 2026 Acara selamatan di lokasi Sungai Tukka jam 07.00 WIB",
             text:"Silakan ajukan lembur jika perlu"
         });
 
