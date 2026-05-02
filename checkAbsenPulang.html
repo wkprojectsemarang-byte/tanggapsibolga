@@ -156,7 +156,6 @@ function absenPulang(){
 
         const updateData = {
             ...data,
-             mulailembur: getWIB(now),
             pulang: getWIB(now)
         };
 
@@ -186,7 +185,7 @@ function ajukanLembur(){
     ];
 
     const bulan = namabulan[now.getMonth()];
-    const tanggal = formatTanggal(now);
+    const tanggal = now.getDate()+String(new Date().getMonth() + 1).padStart(2,'0')+now.getFullYear();
     const nama = localStorage.getItem("username");
     const tampilanBulan = now.getDate() + " " + bulan + " " + now.getFullYear();
 
@@ -195,7 +194,7 @@ function ajukanLembur(){
         return;
     }
 
-    // 🔥 CEK DATA SUDAH ADA ATAU BELUM
+    // 🔥 CEK LEMBUR SUDAH ADA
     db.ref("lembur/" + tanggal + "/" + nama).once("value", snap => {
 
         if(snap.exists()){
@@ -209,40 +208,59 @@ function ajukanLembur(){
             return;
         }
 
-        // ✅ DATA TANPA ALASAN INPUT
-        const dataLembur = {
-            nama: nama,
-            tanggal: tanggal,
-            date: tampilanBulan,
-            mulailembur: getWIB(now),
-            selesailembur: "-",
-            selesai: "-",
-            alasan: "-" // otomatis
-        };
+        // 🔥 AMBIL DATA ABSEN DULU
+        db.ref("absen/" + tanggal + "/" + nama).once("value", absenSnap => {
 
-        db.ref("lembur/" + tanggal + "/" + nama).set(dataLembur);
-        db.ref("backup/" + tanggal + "/" + nama).set(dataLembur);
-        db.ref("periodelembur/" + nama + "/" + tanggal).set(dataLembur);
-        db.ref("backuplembur/" + tanggal + "/" + nama).set(dataLembur);
+            if(!absenSnap.exists()){
+                Swal.fire("Error","Data absen tidak ditemukan","error");
+                return;
+            }
 
-        const dataAktif = {
-            nama: nama,
-            tanggalselesai: "-",
-            tanggal: tampilanBulan,
-            mulailembur: getWIB(now),
-            selesailembur: "-",
-          
-        };
+            const data = absenSnap.val();
 
-        db.ref("lembur/Aktif/" + nama ).set(dataAktif);
+            // 🔥 UPDATE ABSEN (INI YANG KAMU MAU)
+            const updateData = {
+                ...data,
+                mulailembur: getWIB(now),
+                pulang: getWIB(now)
+            };
 
-        // 🔥 ALERT SUKSES TANPA INPUT + REDIRECT
-        Swal.fire({
-            icon: "success",
-            title: "Berhasil",
-            text: "Pengajuan lembur berhasil"
-        }).then(() => {
-            window.location.href = "home.html";
+            db.ref("absen/" + tanggal + "/" + nama).update(updateData);
+
+            // 🔥 DATA LEMBUR
+            const dataLembur = {
+                nama: nama,
+                tanggal: tanggal,
+                date: tampilanBulan,
+                mulailembur: getWIB(now),
+                selesailembur: "-",
+                selesai: "-",
+                alasan: "-"
+            };
+
+            db.ref("lembur/" + tanggal + "/" + nama).set(dataLembur);
+            db.ref("backup/" + tanggal + "/" + nama).set(dataLembur);
+            db.ref("periodelembur/" + nama + "/" + tanggal).set(dataLembur);
+            db.ref("backuplembur/" + tanggal + "/" + nama).set(dataLembur);
+
+            const dataAktif = {
+                nama: nama,
+                tanggalselesai: "-",
+                tanggal: tampilanBulan,
+                mulailembur: getWIB(now),
+                selesailembur: "-"
+            };
+
+            db.ref("lembur/Aktif/" + nama).set(dataAktif);
+
+            Swal.fire({
+                icon: "success",
+                title: "Berhasil",
+                text: "Pengajuan lembur berhasil"
+            }).then(() => {
+                window.location.href = "home.html";
+            });
+
         });
 
     });
