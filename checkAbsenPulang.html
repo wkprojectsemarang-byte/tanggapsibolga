@@ -235,13 +235,15 @@ function ajukanLembur(){
                 mulailembur: getWIB(now),
                 selesailembur: "-",
                 selesai: "-",
+                 tanggalselesai: "-",
                 alasan: "-"
             };
 
             db.ref("lembur/" + tanggal + "/" + nama).set(dataLembur);
             db.ref("backup/" + tanggal + "/" + nama).set(dataLembur);
             db.ref("periodelembur/" + nama + "/" + tanggal).set(dataLembur);
-            db.ref("backuplembur/" + tanggal + "/" + nama).set(dataLembur);
+           db.ref("izin/lembur/" + tanggal + "/" + nama).set(dataLembur);
+            db.ref("backuplembur/" + tampilanBulan + "/" + nama).set(dataLembur);
 
             const dataAktif = {
                 nama: nama,
