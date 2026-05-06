@@ -151,6 +151,13 @@ border-radius:5px;
 
     async function uploadPhoto(){
 
+        const nama = localStorage.getItem("username");
+
+        if(!nama){
+            alert("Username tidak ditemukan, silakan login ulang!");
+            window.location.href = "index.html";
+            return;
+        }
 
     const file = document.getElementById("imageFile").files[0];
 
@@ -192,7 +199,7 @@ border-radius:5px;
         const now = new Date();
         const pulang = "-";
         const bulan = namabulan[now.getMonth()];
-        const nama = localStorage.getItem("username");
+       
         const jabatan = "Site Manager of Administratif";
         const tanggal = now.getDate()+String(new Date().getMonth() + 1).padStart(2,'0')+now.getFullYear();
         const tampilanBulan = now.getDate() + " " + bulan + " " + now.getFullYear();
@@ -222,6 +229,8 @@ border-radius:5px;
             keterangan = "Tepat Waktu";
         }
 
+    // ⬇️ HAPUS
+    firebase.database().ref("izin/belumhadir/" + tanggal + "/" + nama).remove();
 
          // SIMPAN KE FIREBASE
     firebase.database().ref("absen/"+tanggal+"/"+nama).update({
@@ -262,17 +271,33 @@ border-radius:5px;
      
     });
 
+     firebase.database().ref("izin/hadir/" + tanggal+"/"+nama).update({
+       photo: imageUrl,
+        waktu: waktuLengkap,
+        date: now.getDate()+String(new Date().getMonth() + 1).padStart(2,'0')+now.getFullYear(),
+        nama : nama,
+        tanggal:tampilanBulan,
+        pulang : pulang,
+         mulailembur :mulaiLembur,
+        selesailembur : selesaiLembur,
+        keterangan : keterangan,
+
+     
+    });
+
+    
+
        document.getElementById("btnupload").style.display = "none";
        loading.style.display = "none"; // hilangkan loading
           Swal.fire({
-    position: 'top-end',
-    icon: 'success',
-    title: 'Berhasil di Upload',
-    text: 'jangan lupa melakukan Absensi Pulang,karena hal wajib utk dilaksanakan !! ',
-    showConfirmButton: false,
-    timer: 5000,
-    timerProgressBar: true
-});
+            position: 'top-end',
+            icon: 'success',
+            title: 'Berhasil di Upload',
+            text: 'jangan lupa melakukan Absensi Pulang,karena hal wajib utk dilaksanakan !! ',
+            showConfirmButton: false,
+            timer: 5000,
+            timerProgressBar: true
+        });
        
         
      
