@@ -268,7 +268,7 @@ button{
 }
 
 .tidak-hadir {
-    background: #006400; /* hijau tua */
+    background: #e09c6f63; /* hijau tua */
 }
 
 .top-bar {
@@ -454,6 +454,45 @@ button{
 .btn-lembur span {
     font-size: 14px;
 }
+
+.mini-info{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 10px;
+    border-radius:18px;
+    font-size:12px;
+    font-weight:600;
+    white-space:nowrap;
+}
+
+.mini-label{
+    opacity:0.8;
+}
+
+.mini-info span:last-child{
+    font-weight:bold;
+}
+
+.mini-info.hadir{
+    background:#e8f5e9;
+    color:#2e7d32;
+}
+
+.mini-info.belum{
+    background:#fff8e1;
+    color:#f57f17;
+}
+
+.mini-info.izin{
+    background:#e3f2fd;
+    color:#1565c0;
+}
+
+.mini-info.lembur{
+    background:#fff3e0;
+    color:#e65100;
+}
 </style>
 </head>
 
@@ -511,6 +550,8 @@ if (username === "Nurhakiki") {
 if (username === "Nurhakiki") {
     document.getElementById("menuIzin").style.display = "block";
 }
+
+
 </script>
 
 
@@ -615,16 +656,27 @@ setInterval(updateMenuByTime, 60000);
 </a>
     <div id="jam" class="text-kecil"></div>
 
-    <div style="display:flex; align-items:center; gap:10px;">
-        <div id="infoBelumHadir" class="text-kecil" style="
-            padding:8px;
-            background:#fff3cd;
-            border:1px solid #ffeeba;
-            border-radius:8px;
-            color:#856404;
-        ">
-            Jumlah Kehadiran: 0
-        </div>
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+    
+    <div class="mini-info hadir">
+        <span class="mini-label">Hadir</span>
+        <span id="infoBelumHadir">0</span>
+    </div>
+
+    <div class="mini-info belum">
+        <span class="mini-label">Belum Hadir</span>
+        <span id="infoBelum">0</span>
+    </div>
+
+    <div class="mini-info izin">
+        <span class="mini-label">Izin</span>
+        <span id="infoIzin">0</span>
+    </div>
+
+<div class="mini-info lembur">
+    <span class="mini-label">Lembur Hari Ini</span>
+    <span id="infoLembur">0</span>
+</div>
 
         <!-- SEARCH PINDAH KE SINI -->
         <div class="search-box">
@@ -636,7 +688,7 @@ setInterval(updateMenuByTime, 60000);
 
 <div class="running-text">
     <div class="running-content">
-        Aplikasi Kehadiran Kerja, Bencana Tanggap Sibolga &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;
+         Aplikasi Kehadiran Kerja, Bencana Tanggap Sibolga &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; 
          Pastikan data absensi sudah benar di saat Login &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;
        
     </div>
@@ -717,6 +769,57 @@ let allData = [];
 let filteredData = [];
 const tanggaldisplay = "27042026";
 
+// =======================
+// 🔥 HITUNG BELUM HADIR
+// =======================
+const belumRef = ref(db, "izin/belumhadir/" + tanggal);
+
+onValue(belumRef, (snapshot) => {
+    const data = snapshot.val();
+    const jumlah = data ? Object.keys(data).length : 0;
+
+    document.getElementById("infoBelum").innerText = jumlah;
+});
+
+
+// =======================
+// 🔥 HITUNG HADIR
+// =======================
+const hadirRef = ref(db, "izin/hadir/" + tanggal);
+
+onValue(hadirRef, (snapshot) => {
+    const data = snapshot.val();
+    const jumlah = data ? Object.keys(data).length : 0;
+
+    document.getElementById("infoBelumHadir").innerText = jumlah;
+});
+
+
+// =======================
+// 🔥 HITUNG IZIN
+// =======================
+const izinRef = ref(db, "izin/izin/" + tanggal);
+
+onValue(izinRef, (snapshot) => {
+    const data = snapshot.val();
+    const jumlah = data ? Object.keys(data).length : 0;
+
+    document.getElementById("infoIzin").innerText = jumlah;
+});
+
+
+// =======================
+// 🔥 HITUNG LEMBUR AKTIF
+// =======================
+const lemburAllRef = ref(db, "izin/lembur/" + tanggal);
+
+onValue(lemburAllRef, (snapshot) => {
+    const data = snapshot.val();
+    const jumlah = data ? Object.keys(data).length : 0;
+
+    document.getElementById("infoLembur").innerText = jumlah;
+});
+
 
 document.getElementById("searchInput").addEventListener("keyup", function() {
     let filter = this.value.toLowerCase();
@@ -739,6 +842,7 @@ const btnLembur = document.querySelector(".top-bar button");
 const menuAbsen = document.getElementById("AbsenMasuk");
 
 onValue(lemburRef, (snapshot) => {
+
     const data = snapshot.val();
 
     if (data) {
@@ -756,25 +860,6 @@ onValue(lemburRef, (snapshot) => {
         menuAbsen.style.pointerEvents = "auto";
         menuAbsen.style.opacity = "1";
     }
-});
-
-
-const dbBelumRef = ref(db, "absen/"+tanggal);
-
-onValue(dbBelumRef, (snapshot) => {
-    const data = snapshot.val();
-
-    if (!data) {
-        document.getElementById("infoBelumHadir").innerHTML =
-            "Jumlah Kehadiran: 0";
-        return;
-    }
-
-    // hitung jumlah nama
-    const jumlah = Object.keys(data).length;
-
-    document.getElementById("infoBelumHadir").innerHTML =
-        "Jumlah Kehadiran: " + jumlah;
 });
 
 
@@ -799,13 +884,27 @@ onValue(dbRef, (snapshot) => {
     allData = Object.values(data);
 
     // 🔥 SORT BERDASARKAN JAM MASUK (TERKECIL DI ATAS)
-    allData.sort((a, b) => {
-        // kalau kosong, taruh di bawah
-        if (!a.waktu) return 1;
-        if (!b.waktu) return -1;
+   allData.sort((a, b) => {
+    const lemburA = a.mulailembur;
+    const lemburB = b.mulailembur;
 
-        return a.waktu.localeCompare(b.waktu);
-    });
+    // kalau dua-duanya ada jam lembur → sort berdasarkan jam
+    if (lemburA && lemburA !== "-" && lemburB && lemburB !== "-") {
+        return lemburA.localeCompare(lemburB);
+    }
+
+    // kalau A ada lembur, B tidak → A di atas
+    if (lemburA && lemburA !== "-") return -1;
+
+    // kalau B ada lembur, A tidak → B di atas
+    if (lemburB && lemburB !== "-") return 1;
+
+    // kalau dua-duanya tidak ada lembur → fallback ke jam masuk
+    if (!a.waktu) return 1;
+    if (!b.waktu) return -1;
+
+    return a.waktu.localeCompare(b.waktu);
+});
 
 filteredData = allData;
     currentPage = 1;
@@ -832,7 +931,7 @@ filteredData = allData;
          <td style='text-align:center;'>${item.nama}</td>
          <td style='text-align:center;'>
             <span class="badge ${!item.waktu ? "tidak-hadir" : "masuk"}">
-                ${item.waktu ? item.waktu : "Tidak Hadir"}
+                ${item.waktu ? item.waktu : "Belum Hadir"}
             </span>
         </td>
 <td style='text-align:center;'>
