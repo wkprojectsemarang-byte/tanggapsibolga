@@ -291,17 +291,20 @@ button{
 .search-box {
     position: relative;
     width: 250px;
+     max-width:160px;
 }
 
 .search-box input {
     width: 100%;
-    padding: 10px 40px 10px 15px;
-    border-radius: 25px;
+   
     border: 1px solid #ddd;
     outline: none;
-    font-size: 13px;
+   
     background: #f9f9f9;
     transition: 0.3s;
+    padding:6px 30px 6px 10px;
+    font-size:11px;
+    border-radius:18px;
 }
 
 .search-box input:focus {
@@ -323,6 +326,8 @@ button{
     .top-bar {
         flex-direction: column;
         align-items: stretch;
+        gap:6px;
+        padding:8px;
     }
 
     .search-box {
@@ -455,23 +460,26 @@ button{
     font-size: 14px;
 }
 
+/* MINI INFO LEBIH KECIL */
 .mini-info{
     display:flex;
     align-items:center;
-    gap:6px;
-    padding:6px 10px;
-    border-radius:18px;
-    font-size:12px;
+    gap:4px;
+    padding:3px 6px;
+    border-radius:14px;
+    font-size:9px;
     font-weight:600;
     white-space:nowrap;
+      min-width:auto;
 }
 
 .mini-label{
     opacity:0.8;
+    font-size:9px;
 }
-
 .mini-info span:last-child{
     font-weight:bold;
+    font-size:9px;
 }
 
 .mini-info.hadir{
@@ -493,6 +501,144 @@ button{
     background:#fff3e0;
     color:#e65100;
 }
+
+/* =========================
+   DASHBOARD MODERN MINIMALIS
+========================= */
+
+.dashboard-cards{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    padding:8px 10px;
+    align-items:flex-start;
+}
+/* CARD */
+.card-mini{
+    flex:0 0 calc(50% - 6px); /* 2 card per baris */
+    max-width:160px;
+    min-width:140px;
+    text-decoration:none;
+    padding:12px;
+    border-radius:16px;
+    color:white;
+    transition:all 0.25s ease;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 3px 10px rgba(0,0,0,0.10);
+}
+
+/* efek modern blur */
+.card-mini::before{
+    content:"";
+    position:absolute;
+    width:70px;
+    height:70px;
+    background:rgba(255,255,255,0.08);
+    border-radius:50%;
+    top:-20px;
+    right:-20px;
+}
+
+/* hover */
+.card-mini:hover{
+    transform:translateY(-2px);
+    box-shadow:0 5px 14px rgba(0,0,0,0.16);
+}
+
+/* isi */
+.card-content{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    position:relative;
+    z-index:2;
+}
+
+.card-title{
+    font-size:11px;
+    opacity:0.9;
+    letter-spacing:0.3px;
+}
+
+.card-number{
+    font-size:22px;
+    font-weight:bold;
+    line-height:1;
+}
+
+/* WARNA CARD */
+.hadir-card{
+    background:linear-gradient(135deg,#4ca3af,#2499a1);
+}
+
+.belum-card{
+    background:linear-gradient(135deg,#FF9800,#EF6C00);
+}
+
+.izin-card{
+    background:linear-gradient(135deg,#61676b,#50515575);
+}
+
+.lembur-card{
+    background:linear-gradient(135deg,#ff7043,#e64a19);
+}
+
+/* SEARCH */
+.search-modern{
+    width:100%;
+    margin-top:4px;
+}
+
+.search-modern input{
+    width:100%;
+    padding:10px 14px;
+    border:none;
+    border-radius:20px;
+    background:#f5f5f5;
+    outline:none;
+    font-size:12px;
+    transition:0.3s;
+    box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+
+.search-modern input:focus{
+    background:white;
+    box-shadow:0 4px 10px rgba(33,150,243,0.20);
+}
+
+/* MOBILE */
+@media(max-width:600px){
+
+    .dashboard-cards{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:8px;
+        padding:8px;
+    }
+
+    .card-mini{
+        width:100%;
+        min-width:auto;
+        max-width:none;
+        padding:10px;
+        border-radius:14px;
+    }
+
+    .card-title{
+        font-size:10px;
+    }
+
+    .card-number{
+        font-size:18px;
+    }
+
+    .search-modern{
+        grid-column:1 / -1;
+    }
+}
+
+
 </style>
 </head>
 
@@ -513,8 +659,7 @@ button{
          <a href="checkAbsenPulang.html" id="AbsenPulang" style="display:none;">Absen Pulang</a>
          
          <a href="dataAbsen.html">Data </a>
-         <a href="passw.html">Ganti Password </a>
-        <a href="izintabel.html" id="menuIzin" style="display:none;">Request Izin Karyawan</a>
+         <a href="izintabel.html" id="menuIzin" style="display:none;">Request Izin Karyawan</a>
         <a href="Register.html" id="menuRegister" style="display:none;">Registrasi User</a>
          <a href="index.html">Logout</a>
       </div>
@@ -658,31 +803,46 @@ setInterval(updateMenuByTime, 60000);
 
     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
     
-    <div class="mini-info hadir">
-        <span class="mini-label">Hadir</span>
-        <span id="infoBelumHadir">0</span>
+    <div class="dashboard-cards">
+
+    <a href="" class="card-mini hadir-card">
+        <div class="card-content">
+            <span class="card-title">Hadir</span>
+            <span id="infoBelumHadir" class="card-number">0</span>
+        </div>
+    </a>
+
+    <a href="belumhadir.html" target="_blank" class="card-mini belum-card">
+        <div class="card-content">
+            <span class="card-title">Belum Hadir</span>
+            <span id="infoBelum" class="card-number">0</span>
+        </div>
+    </a>
+
+    <a href="izinhadir.html" target="_blank" class="card-mini izin-card">
+        <div class="card-content">
+            <span class="card-title">Izin</span>
+            <span id="infoIzin" class="card-number">0</span>
+        </div>
+    </a>
+
+    <a href="lemburhadir.html" target="_blank" class="card-mini lembur-card">
+        <div class="card-content">
+            <span class="card-title">Lembur Hari Ini</span>
+            <span id="infoLembur" class="card-number">0</span>
+        </div>
+    </a>
+
+    <!-- SEARCH -->
+    <div class="search-modern">
+        <input type="text" id="searchInput" placeholder="Cari nama...">
     </div>
 
-    <div class="mini-info belum">
-        <span class="mini-label">Belum Hadir</span>
-        <span id="infoBelum">0</span>
-    </div>
-
-    <div class="mini-info izin">
-        <span class="mini-label">Izin</span>
-        <span id="infoIzin">0</span>
-    </div>
-
-<div class="mini-info lembur">
-    <span class="mini-label">Lembur Hari Ini</span>
-    <span id="infoLembur">0</span>
+</div>
 </div>
 
         <!-- SEARCH PINDAH KE SINI -->
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Cari nama...">
-            <span class="icon"></span>
-        </div>
+       
     </div>
 </div>
 
@@ -873,7 +1033,7 @@ onValue(dbRef, (snapshot) => {
     if (!data) {
         document.getElementById("isiData").innerHTML = `
         <tr>
-            <td colspan="5" style="text-align:center; padding:10px;">
+            <td colspan="7" style="text-align:center; padding:10px;">
                 Data Belum Tersedia !
             </td>
         </tr>`;
