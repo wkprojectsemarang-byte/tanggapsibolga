@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Info Belum Hadir</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',Arial,sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    color:#333;
+}
+
+/* NAVBAR */
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 20px;
+    background:white;
+    box-shadow:0 2px 10px rgba(0,0,0,0.06);
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.logo{
+    font-size:20px;
+    font-weight:700;
+    color:#2196F3;
+}
+
+.profile-menu{
+    position:relative;
+}
+
+.profile-img{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    object-fit:cover;
+    cursor:pointer;
+    border:2px solid #2196F3;
+    transition:0.3s;
+}
+
+.profile-img:hover{
+    transform:scale(1.05);
+}
+
+.dropdown{
+    position:absolute;
+    right:0;
+    top:60px;
+    background:white;
+    width:170px;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,0.12);
+    display:none;
+}
+
+.dropdown a{
+    display:block;
+    padding:14px;
+    text-decoration:none;
+    color:#333;
+    font-size:14px;
+    transition:0.2s;
+}
+
+.dropdown a:hover{
+    background:#f4f7fb;
+    color:#2196F3;
+}
+
+/* CONTENT */
+.container{
+    padding:20px;
+    max-width:900px;
+    margin:auto;
+}
+
+/* CARD */
+.card{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.06);
+}
+
+/* HEADER */
+.header-card{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.title{
+    font-size:22px;
+    font-weight:700;
+}
+
+#jam{
+    font-size:14px;
+    color:#666;
+    text-align:right;
+    line-height:1.5;
+}
+
+/* TABLE */
+.table-container{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#2196F3;
+    color:white;
+    padding:14px;
+    font-size:14px;
+    font-weight:600;
+}
+
+th:first-child{
+    border-top-left-radius:12px;
+}
+
+th:last-child{
+    border-top-right-radius:12px;
+}
+
+td{
+    padding:14px;
+    border-bottom:1px solid #eee;
+    text-align:center;
+    font-size:15px;
+}
+
+tr{
+    transition:0.2s;
+}
+
+tr:hover{
+    background:#f8fbff;
+}
+
+.photoTable{
+    width:55px;
+    height:55px;
+    object-fit:cover;
+    border-radius:14px;
+    border:2px solid #e3f2fd;
+}
+
+/* EMPTY */
+.empty{
+    padding:25px;
+    text-align:center;
+    color:#888;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+
+    .title{
+        font-size:18px;
+    }
+
+    #jam{
+        text-align:left;
+    }
+
+    th,td{
+        font-size:13px;
+        padding:12px;
+    }
+
+    .photoTable{
+        width:50px;
+        height:50px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+
+    <div class="logo">
+        Info Belum Hadir
+    </div>
+
+    <div class="profile-menu">
+
+        <img 
+        src="https://res.cloudinary.com/dzcn2tukg/image/upload/v1777191548/project_helmet_architect_constructor_builder_icon_255747_ekaypm.png"
+        class="profile-img"
+        onclick="toggleMenu()">
+
+        <div class="dropdown" id="dropdownMenu">
+            <a href="home.html" target="_blank">Home</a>
+            <a href="index.html" target="_blank">Logout</a>
+        </div>
+
+    </div>
+
+</nav>
+
+<!-- CONTENT -->
+<div class="container">
+
+    <div class="card">
+
+        <div class="header-card">
+
+            <div class="title">
+                Data Karyawan Belum Hadir Hari ini
+            </div>
+
+            <div id="jam"></div>
+
+        </div>
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th width="120">Photo</th>
+                        <th>Nama</th>
+                    </tr>
+                </thead>
+
+                <tbody id="isiData">
+                    <tr>
+                        <td colspan="2" class="empty">
+                            Memuat data...
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function toggleMenu(){
+   const menu = document.getElementById("dropdownMenu");
+   menu.style.display =
+   menu.style.display === "block" ? "none" : "block";
+}
+
+window.onclick = function(e){
+    if(!e.target.matches('.profile-img')){
+        document.getElementById("dropdownMenu").style.display = "none";
+    }
+}
+
+function waktuIndonesia(){
+
+    const hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+
+    const bulan = [
+    "Januari","Februari","Maret","April","Mei","Juni",
+    "Juli","Agustus","September","Oktober","November","Desember"
+    ];
+
+    const sekarang = new Date();
+
+    let h = hari[sekarang.getDay()];
+    let t = sekarang.getDate();
+    let b = bulan[sekarang.getMonth()];
+    let th = sekarang.getFullYear();
+
+    let jam = String(sekarang.getHours()).padStart(2,'0');
+    let menit = String(sekarang.getMinutes()).padStart(2,'0');
+    let detik = String(sekarang.getSeconds()).padStart(2,'0');
+
+    document.getElementById("jam").innerHTML =
+    `${h}, ${t} ${b} ${th}<br>
+    Pukul ${jam}:${menit}:${detik} WIB`;
+}
+
+setInterval(waktuIndonesia,1000);
+waktuIndonesia();
+</script>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+onValue
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyCllT1xEA0kLnT2ceLkQgNrhSsAbvUkaxo",
+authDomain: "item-pekerjaan-84734.firebaseapp.com",
+databaseURL: "https://item-pekerjaan-84734-default-rtdb.firebaseio.com",
+projectId: "item-pekerjaan-84734",
+storageBucket: "item-pekerjaan-84734.firebasestorage.app",
+messagingSenderId: "1090276765966",
+appId: "1:1090276765966:web:8eea263c163d81aa45a75f",
+measurementId: "G-TKNH3Y5C3X"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const now = new Date();
+
+const tanggal =
+now.getDate() +
+String(now.getMonth() + 1).padStart(2,'0') +
+now.getFullYear();
+
+const dbRef = ref(db, "izin/belumhadir/" + tanggal);
+
+onValue(dbRef, (snapshot) => {
+
+    const data = snapshot.val();
+    let html = "";
+
+    if(data){
+
+        for(let key in data){
+
+            html += `
+            <tr>
+
+                <td>
+                    <img 
+                    src="${data[key].photo}" 
+                    class="photoTable">
+                </td>
+
+                <td>
+                    ${data[key].nama}
+                </td>
+
+            </tr>
+            `;
+        }
+
+    }else{
+
+        html = `
+        <tr>
+            <td colspan="2" class="empty">
+                Tidak ada data belum hadir
+            </td>
+        </tr>
+        `;
+    }
+
+    document.getElementById("isiData").innerHTML = html;
+
+});
+
+</script>
+
+</body>
+</html>
