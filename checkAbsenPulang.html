@@ -115,7 +115,7 @@ function absenPulang(){
     const menit = now.getMinutes();
     const totalMenit = jam * 60 + menit;
 
-    const batasPulang = 17 * 60; // 17:00 = 1020 menit
+    const batasPulang = 17 * 60;
 
     if(totalMenit < batasPulang){
         Swal.fire({
@@ -134,14 +134,30 @@ function absenPulang(){
         return;
     }
 
-    db.ref("absen/" + tanggal + "/" + nama).once("value", snap => {
+    // 🔥 CEK APAKAH NAMA ADA DI DATA ABSEN HARI INI
+    db.ref("absen/" + tanggal).once("value", snap => {
 
         if(!snap.exists()){
-            Swal.fire("Error","Data tidak ditemukan","error");
+            Swal.fire({
+                icon:"error",
+                title:"Data Tidak Ada",
+                text:"Belum ada data absensi hari ini"
+            });
             return;
         }
 
-        const data = snap.val();
+        // 🔥 CEK KEY NAMA
+        if(!snap.hasChild(nama)){
+            Swal.fire({
+                icon:"warning",
+                title:"Belum Absen Masuk",
+                text:"Anda belum melakukan absen masuk hari ini"
+            });
+            return;
+        }
+
+        // 🔥 AMBIL DATA USER
+        const data = snap.child(nama).val();
 
         if(data.pulang && data.pulang !== "-"){
             Swal.fire({
@@ -240,8 +256,7 @@ function ajukanLembur(){
             };
 
             db.ref("lembur/" + tanggal + "/" + nama).set(dataLembur);
-            db.ref("backup/" + tanggal + "/" + nama).set(dataLembur);
-            db.ref("periodelembur/" + nama + "/" + tanggal).set(dataLembur);
+           db.ref("periodelembur/" + nama + "/" + tanggal).set(dataLembur);
            db.ref("izin/lembur/" + tanggal + "/" + nama).set(dataLembur);
             db.ref("backuplembur/" + tampilanBulan + "/" + nama).set(dataLembur);
 
