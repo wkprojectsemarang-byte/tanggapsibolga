@@ -172,14 +172,14 @@ const nama = localStorage.getItem("username");
     formData.append("file", file);
 
     // upload preset dari Cloudinary
-    formData.append("upload_preset", "wikaproject");
+    formData.append("upload_preset", "bossku5");
 
     // PUBLIC ID UNIK (anti overwrite)
     const uniqueId = "foto_" + Date.now();
     formData.append("public_id", uniqueId);
 
     try {
-        const response = await fetch("https://api.cloudinary.com/v1_1/sinar-surya/image/upload", {
+        const response = await fetch("https://api.cloudinary.com/v1_1/doh6a5vdi/image/upload", {
             method: "POST",
             body: formData
         });

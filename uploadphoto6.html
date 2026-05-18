@@ -174,14 +174,14 @@ border-radius:5px;
     formData.append("file", file);
 
     // upload preset dari Cloudinary
-    formData.append("upload_preset", "Absen-wika2");
+    formData.append("upload_preset", "Absen-wika5");
 
     // PUBLIC ID UNIK (anti overwrite)
     const uniqueId = "foto_" + Date.now();
     formData.append("public_id", uniqueId);
 
     try {
-        const response = await fetch("https://api.cloudinary.com/v1_1/dzcn2tukg/image/upload", {
+        const response = await fetch("https://api.cloudinary.com/v1_1/drps6y2oa/image/upload", {
             method: "POST",
             body: formData
         });
