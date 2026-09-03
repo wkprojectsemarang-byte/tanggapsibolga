@@ -151,13 +151,6 @@ border-radius:5px;
 
     async function uploadPhoto(){
 
-        const nama = localStorage.getItem("username");
-
-        if(!nama){
-            alert("Username tidak ditemukan, silakan login ulang!");
-            window.location.href = "index.html";
-            return;
-        }
 
     const file = document.getElementById("imageFile").files[0];
 
@@ -180,7 +173,7 @@ border-radius:5px;
     formData.append("public_id", uniqueId);
 
     try {
-        const response = await fetch("https://api.cloudinary.com/v1_1/dwzjlkkah/image/upload", {
+        const response = await fetch("https://api.cloudinary.com/v1_1/dzasrzbqb/image/upload", {
             method: "POST",
             body: formData
         });
@@ -199,7 +192,7 @@ border-radius:5px;
         const now = new Date();
         const pulang = "-";
         const bulan = namabulan[now.getMonth()];
-       
+        const nama = localStorage.getItem("username");
         const jabatan = "Site Manager of Administratif";
         const tanggal = now.getDate()+String(new Date().getMonth() + 1).padStart(2,'0')+now.getFullYear();
         const tampilanBulan = now.getDate() + " " + bulan + " " + now.getFullYear();
@@ -220,17 +213,80 @@ border-radius:5px;
         const waktuLengkap = jam + ":" + menit + ":" + detik + " wib";
        
        
-        let keterangan;
+      
+            // =================================================
+            // MENENTUKAN KETERANGAN ABSENSI
+            // =================================================
 
-                // logika pakai ANGKA, bukan string
-        if (jamAngka > 8 || (jamAngka === 8 && menitAngka > 15)) {
-            keterangan = "Terlambat";
-        } else {
-            keterangan = "Tepat Waktu";
-        }
+            let keterangan;
 
-    // ⬇️ HAPUS
-    firebase.database().ref("izin/belumhadir/" + tanggal + "/" + nama).remove();
+
+            /*
+             ====================================================
+             BATAS WAKTU ABSENSI
+             ====================================================
+
+             Tepat waktu:
+             00:00 sampai 07:45
+
+             Terlambat:
+             07:46 ke atas
+
+
+             Contoh:
+
+             07:44  = Tepat Waktu
+             07:45  = Tepat Waktu
+             07:46  = Terlambat
+             08:00  = Terlambat
+             09:00  = Terlambat
+             ====================================================
+            */
+
+
+            if(
+                jamAngka > 7 ||
+                (
+                    jamAngka === 7 &&
+                    menitAngka > 45
+                )
+            ){
+
+                keterangan = "Terlambat";
+
+            }else{
+
+                keterangan = "Tepat Waktu";
+
+            }
+
+
+            console.log(
+                "Jam Absensi:",
+                waktuLengkap
+            );
+
+            console.log(
+                "Keterangan:",
+                keterangan
+            );
+
+
+            // =================================================
+            // HAPUS DATA IZIN/BELUMHADIR
+            // =================================================
+
+            firebase
+                .database()
+                .ref(
+                    "izin/belumhadir/" +
+                    tanggal +
+                    "/" +
+                    nama
+                )
+                .remove();
+
+
 
          // SIMPAN KE FIREBASE
     firebase.database().ref("absen/"+tanggal+"/"+nama).update({
@@ -285,7 +341,8 @@ border-radius:5px;
      
     });
 
-    
+    // ⬇️ HAPUS
+firebase.database().ref("izin/belumhadir/" + tanggal + "/" + nama).remove();
 
        document.getElementById("btnupload").style.display = "none";
        loading.style.display = "none"; // hilangkan loading
