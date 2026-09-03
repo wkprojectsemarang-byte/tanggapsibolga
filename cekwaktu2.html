@@ -7,6 +7,7 @@
 </head>
 <body>
     
+
 <script>
 function cekAkses() {
     var now = new Date();
@@ -15,16 +16,16 @@ function cekAkses() {
 
     var waktu = jam * 60 + menit;
 
-    var mulai = 23* 60 + 15;   // 08:30
-     var awal= 6* 60 + 15;   // 08:30
-    var selesai = 17 * 60 ; // 17
+    var mulai = 5 * 60; // 05:00 = 300 menit
 
-    if (waktu > mulai) {
+    if (waktu < mulai) {
+        alert("Akses kehadiran dimulai pukul 05:00 WIB!");
         window.location.href = "home.html";
-         alert("akses di tutup, Batas waktu kehadiran jam 08:15 wib !!");
-     return; } 
-     
-     window.location.href = "aksesAbsen.html";
+        return;
+    }
+
+    // Jika sudah jam 05:00 ke atas
+    window.location.href = "aksesAbsen.html";
 }
 
 cekAkses();
