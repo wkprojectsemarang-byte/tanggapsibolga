@@ -1,13 +1,20 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>Absensi Photo</title>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
+
         body{
             font-family:Arial;
             background:#f2f2f2;
@@ -86,6 +93,7 @@
         }
 
         @keyframes putar{
+
             0%{
                 transform:rotate(0deg);
             }
@@ -93,19 +101,29 @@
             100%{
                 transform:rotate(360deg);
             }
+
         }
+
     </style>
+
 </head>
+
 
 <body>
 
+
 <div class="container">
 
+
     <label for="imageFile">
+
         Klik Tombol untuk Ambil Photo:
+
     </label>
 
+
     <br>
+
 
     <input
         type="file"
@@ -114,705 +132,889 @@
         accept="image/*"
     >
 
+
     <br><br>
+
 
     <div class="preview">
-        <img id="preview" src="">
+
+        <img
+            id="preview"
+            src=""
+        >
+
     </div>
 
-    <div id="loading" style="display:none;">
+
+    <div
+        id="loading"
+        style="display:none;"
+    >
+
         <div>
+
             <div class="spinner"></div>
+
             <br>
+
             Uploading...
+
         </div>
+
     </div>
 
-    <button onclick="uploadPhoto()" id="btnupload">
+
+    <button
+        onclick="uploadPhoto()"
+        id="btnupload"
+    >
+
         Upload
+
     </button>
+
 
     <br><br>
 
-    <a href="home.html" style="font-size:20px;">
+
+    <a
+        href="home.html"
+        style="font-size:20px;"
+    >
+
         Kembali
+
     </a>
+
 
 </div>
 
 
-<!-- FIREBASE -->
+
+<!-- =========================================================
+     FIREBASE
+========================================================= -->
+
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+
 
 <script>
 
-    // =========================================================
-    // INPUT / PREVIEW PHOTO
-    // =========================================================
 
-    document.getElementById("imageFile").value = "";
+// =========================================================
+// INPUT / PREVIEW PHOTO
+// =========================================================
 
-    const input = document.getElementById("imageFile");
-    const preview = document.getElementById("preview");
-
-    input.addEventListener("change", function() {
-
-        const file = this.files[0];
-
-        if (file) {
-
-            const url = URL.createObjectURL(file);
-
-            preview.src = url;
-            preview.style.display = "block";
-        }
-
-    });
+document
+    .getElementById("imageFile")
+    .value = "";
 
 
-    // =========================================================
-    // FIREBASE CONFIGURATION
-    // =========================================================
-
-    const firebaseConfig = {
-
-        apiKey: "AIzaSyCllT1xEA0kLnT2ceLkQgNrhSsAbvUkaxo",
-
-        authDomain:
-            "item-pekerjaan-84734.firebaseapp.com",
-
-        databaseURL:
-            "https://item-pekerjaan-84734-default-rtdb.firebaseio.com",
-
-        projectId:
-            "item-pekerjaan-84734",
-
-        storageBucket:
-            "item-pekerjaan-84734.firebasestorage.app",
-
-        messagingSenderId:
-            "1090276765966",
-
-        appId:
-            "1:1090276765966:web:8eea263c163d81aa45a75f",
-
-        measurementId:
-            "G-TKNH3Y5C3X"
-    };
+const input =
+    document.getElementById("imageFile");
 
 
-    firebase.initializeApp(firebaseConfig);
+const preview =
+    document.getElementById("preview");
 
 
-    // =========================================================
-    // UPLOAD PHOTO
-    // =========================================================
-
-    async function uploadPhoto(){
-
-        const nama = localStorage.getItem("username");
-
-
-        // -----------------------------------------------------
-        // CEK USERNAME
-        // -----------------------------------------------------
-
-        if(!nama){
-
-            alert(
-                "Username tidak ditemukan, silakan login ulang!"
-            );
-
-            window.location.href = "index.html";
-
-            return;
-        }
-
-
-        // -----------------------------------------------------
-        // AMBIL FILE PHOTO
-        // -----------------------------------------------------
+input.addEventListener(
+    "change",
+    function(){
 
         const file =
-            document.getElementById("imageFile").files[0];
+            this.files[0];
 
 
-        if(!file){
+        if(file){
 
-            alert("Pilih foto dulu!");
+            const url =
+                URL.createObjectURL(file);
 
-            return;
+
+            preview.src = url;
+
+
+            preview.style.display =
+                "block";
+
         }
 
-
-        // -----------------------------------------------------
-        // TAMPILKAN LOADING
-        // -----------------------------------------------------
-
-        document.getElementById("loading").style.display = "flex";
+    }
+);
 
 
-        // -----------------------------------------------------
-        // FORMDATA CLOUDINARY
-        // -----------------------------------------------------
 
-        const formData = new FormData();
+// =========================================================
+// FIREBASE CONFIGURATION
+// =========================================================
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyCllT1xEA0kLnT2ceLkQgNrhSsAbvUkaxo",
+
+    authDomain:
+        "item-pekerjaan-84734.firebaseapp.com",
+
+    databaseURL:
+        "https://item-pekerjaan-84734-default-rtdb.firebaseio.com",
+
+    projectId:
+        "item-pekerjaan-84734",
+
+    storageBucket:
+        "item-pekerjaan-84734.firebasestorage.app",
+
+    messagingSenderId:
+        "1090276765966",
+
+    appId:
+        "1:1090276765966:web:8eea263c163d81aa45a75f",
+
+    measurementId:
+        "G-TKNH3Y5C3X"
+
+};
 
 
-        // File utama
-        formData.append("file", file);
+firebase.initializeApp(
+    firebaseConfig
+);
 
 
-        // Upload preset Cloudinary
-        formData.append(
-            "upload_preset",
-            "upload5"
+
+// =========================================================
+// UPLOAD PHOTO
+// =========================================================
+
+async function uploadPhoto(){
+
+
+    const nama =
+        localStorage.getItem("username");
+
+
+
+    // -----------------------------------------------------
+    // CEK USERNAME
+    // -----------------------------------------------------
+
+    if(!nama){
+
+        alert(
+            "Username tidak ditemukan, silakan login ulang!"
         );
 
+        window.location.href =
+            "index.html";
 
-        // PUBLIC ID UNIK
-        // Anti overwrite
-        const uniqueId =
-            "foto_" + Date.now();
+        return;
+
+    }
 
 
-        formData.append(
-            "public_id",
-            uniqueId
+
+    // -----------------------------------------------------
+    // AMBIL FILE PHOTO
+    // -----------------------------------------------------
+
+    const file =
+        document
+        .getElementById("imageFile")
+        .files[0];
+
+
+    if(!file){
+
+        alert(
+            "Pilih foto dulu!"
         );
 
+        return;
 
-        try {
+    }
 
 
-            // =================================================
-            // UPLOAD KE CLOUDINARY
-            // =================================================
 
-            const response = await fetch(
+    // -----------------------------------------------------
+    // TAMPILKAN LOADING
+    // -----------------------------------------------------
+
+    document
+        .getElementById("loading")
+        .style.display = "flex";
+
+
+
+    // -----------------------------------------------------
+    // FORMDATA CLOUDINARY
+    // -----------------------------------------------------
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "file",
+        file
+    );
+
+
+    formData.append(
+        "upload_preset",
+        "upload5"
+    );
+
+
+
+    // -----------------------------------------------------
+    // PUBLIC ID UNIK
+    // -----------------------------------------------------
+
+    const uniqueId =
+        "foto_" +
+        Date.now();
+
+
+    formData.append(
+        "public_id",
+        uniqueId
+    );
+
+
+
+    try{
+
+
+        // =================================================
+        // UPLOAD KE CLOUDINARY
+        // =================================================
+
+        const response =
+            await fetch(
                 "https://api.cloudinary.com/v1_1/djisx48nr/image/upload",
                 {
-                    method: "POST",
-                    body: formData
+                    method:"POST",
+                    body:formData
                 }
             );
 
 
-            const data =
-                await response.json();
+        const data =
+            await response.json();
 
 
-            console.log(
-                "URL:",
-                data.secure_url
+        console.log(
+            "URL:",
+            data.secure_url
+        );
+
+
+
+        // -------------------------------------------------
+        // CEK JIKA CLOUDINARY GAGAL
+        // -------------------------------------------------
+
+        if(!response.ok){
+
+            throw new Error(
+                data.error?.message ||
+                "Upload foto gagal"
             );
 
-
-            // -------------------------------------------------
-            // CEK JIKA CLOUDINARY GAGAL
-            // -------------------------------------------------
-
-            if(!response.ok){
-
-                throw new Error(
-                    data.error?.message ||
-                    "Upload foto gagal"
-                );
-            }
+        }
 
 
-            // -------------------------------------------------
-            // URL IMAGE
-            // -------------------------------------------------
 
-            const imageUrl =
-                data.secure_url +
-                "?t=" +
-                Date.now();
+        // -------------------------------------------------
+        // URL IMAGE
+        // -------------------------------------------------
+
+        const imageUrl =
+            data.secure_url +
+            "?t=" +
+            Date.now();
 
 
-            // =================================================
-            // TANGGAL & WAKTU
-            // =================================================
 
-            const namabulan = [
+        // =================================================
+        // TANGGAL & WAKTU
+        // =================================================
 
-                "Januari",
-                "Februari",
-                "Maret",
-                "April",
-                "Mei",
-                "Juni",
-                "Juli",
-                "Agustus",
-                "September",
-                "Oktober",
-                "November",
-                "Desember"
+        const namabulan = [
 
+            "Januari",
+            "Februari",
+            "Maret",
+            "April",
+            "Mei",
+            "Juni",
+            "Juli",
+            "Agustus",
+            "September",
+            "Oktober",
+            "November",
+            "Desember"
+
+        ];
+
+
+        const now =
+            new Date();
+
+
+        const pulang =
+            "-";
+
+
+        const bulan =
+            namabulan[
+                now.getMonth()
             ];
 
 
-            const now = new Date();
+        const jabatan =
+            "Site Manager of Administratif";
 
 
-            const pulang = "-";
 
+        // =================================================
+        // FORMAT KEY FIREBASE
+        //
+        // TANPA ANGKA 0 DI DEPAN
+        //
+        // Contoh:
+        //
+        // 8 Juli 2026
+        // menjadi:
+        //
+        // 8072026
+        //
+        // 10 Juli 2026
+        // menjadi:
+        //
+        // 1072026
+        //
+        // =================================================
 
-            const bulan =
-                namabulan[now.getMonth()];
+        const tanggal =
+            String(now.getDate()) +
+            String(now.getMonth() + 1) +
+            now.getFullYear();
 
 
-            const jabatan =
-                "Site Manager of Administratif";
 
+        console.log(
+            "KEY TANGGAL FIREBASE:",
+            tanggal
+        );
 
-            // Format:
-            // DDMMYYYY
 
-            const tanggal =
-                String(now.getDate()).padStart(2, '0') +
-                String(now.getMonth() + 1).padStart(2, '0') +
-                now.getFullYear();
 
+        // =================================================
+        // FORMAT TAMPILAN
+        //
+        // Contoh:
+        // 8 Juli 2026
+        // =================================================
 
-            // Format:
-            // DD Bulan YYYY
+        const tampilanBulan =
+            now.getDate() +
+            " " +
+            bulan +
+            " " +
+            now.getFullYear();
 
-            const tampilanBulan =
-                now.getDate() +
-                " " +
-                bulan +
-                " " +
-                now.getFullYear();
 
 
-            const mulaiLembur = "-";
+        const mulaiLembur =
+            "-";
 
-            const selesaiLembur = "-";
 
+        const selesaiLembur =
+            "-";
 
-            // =================================================
-            // JAM
-            // =================================================
 
-            const jamAngka =
-                now.getHours();
 
+        // =================================================
+        // JAM
+        // =================================================
 
-            const menitAngka =
-                now.getMinutes();
-
-
-            // Format 2 digit
-
-            const jam =
-                String(jamAngka)
-                .padStart(2, '0');
-
-
-            const menit =
-                String(menitAngka)
-                .padStart(2, '0');
-
-
-            const detik =
-                String(now.getSeconds())
-                .padStart(2, '0');
-
-
-            // Format:
-            // HH:MM:SS WIB
-
-            const waktuLengkap =
-                jam +
-                ":" +
-                menit +
-                ":" +
-                detik +
-                " wib";
-
-
-            // =================================================
-            // MENENTUKAN KETERANGAN ABSENSI
-            // =================================================
-
-            let keterangan;
-
-
-            /*
-             ====================================================
-             BATAS WAKTU ABSENSI
-             ====================================================
-
-             Tepat waktu:
-             00:00 sampai 07:45
-
-             Terlambat:
-             07:46 ke atas
-
-
-             Contoh:
-
-             07:44  = Tepat Waktu
-             07:45  = Tepat Waktu
-             07:46  = Terlambat
-             08:00  = Terlambat
-             09:00  = Terlambat
-             ====================================================
-            */
-
-
-            if(
-                jamAngka > 7 ||
-                (
-                    jamAngka === 7 &&
-                    menitAngka > 45
-                )
-            ){
-
-                keterangan = "Terlambat";
-
-            }else{
-
-                keterangan = "Tepat Waktu";
-
-            }
-
-
-            console.log(
-                "Jam Absensi:",
-                waktuLengkap
-            );
-
-            console.log(
-                "Keterangan:",
-                keterangan
-            );
-
-
-            // =================================================
-            // HAPUS DATA IZIN/BELUMHADIR
-            // =================================================
-
-            firebase
-                .database()
-                .ref(
-                    "izin/belumhadir/" +
-                    tanggal +
-                    "/" +
-                    nama
-                )
-                .remove();
-
-
-            // =================================================
-            // SIMPAN KE ABSEN
-            // =================================================
-
-            firebase
-                .database()
-                .ref(
-                    "absen/" +
-                    tanggal +
-                    "/" +
-                    nama
-                )
-                .update({
-
-                    photo: imageUrl,
-
-                    waktu: waktuLengkap,
-
-                    date: tampilanBulan,
-
-                    nama: nama,
-
-                    pulang: pulang,
-
-                    mulailembur:
-                        mulaiLembur,
-
-                    selesailembur:
-                        selesaiLembur,
-
-                    keterangan:
-                        keterangan
-
-                });
-
-
-            // =================================================
-            // SIMPAN KE PERIODE
-            // =================================================
-
-            firebase
-                .database()
-                .ref(
-                    "periode/" +
-                    nama +
-                    "/" +
-                    tanggal
-                )
-                .update({
-
-                    photo: imageUrl,
-
-                    waktu: waktuLengkap,
-
-                    date:
-                        String(now.getDate())
-                        .padStart(2, '0') +
-                        String(now.getMonth() + 1)
-                        .padStart(2, '0') +
-                        now.getFullYear(),
-
-                    nama: nama,
-
-                    tanggal:
-                        tampilanBulan,
-
-                    pulang: pulang,
-
-                    mulailembur:
-                        mulaiLembur,
-
-                    selesailembur:
-                        selesaiLembur,
-
-                    keterangan:
-                        keterangan
-
-                });
-
-
-            // =================================================
-            // SIMPAN KE BACKUP
-            // =================================================
-
-            firebase
-                .database()
-                .ref(
-                    "backup/" +
-                    tanggal +
-                    "/" +
-                    nama
-                )
-                .update({
-
-                    photo: imageUrl,
-
-                    waktu: waktuLengkap,
-
-                    date: tampilanBulan,
-
-                    nama: nama,
-
-                    pulang: pulang,
-
-                    mulailembur:
-                        mulaiLembur,
-
-                    selesailembur:
-                        selesaiLembur,
-
-                    keterangan:
-                        keterangan
-
-                });
-
-
-            // =================================================
-            // SIMPAN KE IZIN/HADIR
-            // =================================================
-
-            firebase
-                .database()
-                .ref(
-                    "izin/hadir/" +
-                    tanggal +
-                    "/" +
-                    nama
-                )
-                .update({
-
-                    photo: imageUrl,
-
-                    waktu: waktuLengkap,
-
-                    date:
-                        String(now.getDate())
-                        .padStart(2, '0') +
-                        String(now.getMonth() + 1)
-                        .padStart(2, '0') +
-                        now.getFullYear(),
-
-                    nama: nama,
-
-                    tanggal:
-                        tampilanBulan,
-
-                    pulang: pulang,
-
-                    mulailembur:
-                        mulaiLembur,
-
-                    selesailembur:
-                        selesaiLembur,
-
-                    keterangan:
-                        keterangan
-
-                });
-
-
-            // =================================================
-            // SELESAI
-            // =================================================
-
-            document
-                .getElementById("btnupload")
-                .style.display = "none";
-
-
-            document
-                .getElementById("loading")
-                .style.display = "none";
-
-
-            // =================================================
-            // PESAN BERHASIL
-            // =================================================
-
-            Swal.fire({
-
-                position: "top-end",
-
-                icon: "success",
-
-                title: "Berhasil di Upload",
-
-                text:
-                    "Jangan lupa melakukan Absensi Pulang, karena hal wajib untuk dilaksanakan !!",
-
-                showConfirmButton: false,
-
-                timer: 5000,
-
-                timerProgressBar: true
-
-            });
-
-
-        } catch(error){
-
-
-            console.error(
-                "Upload gagal:",
-                error
-            );
-
-
-            document
-                .getElementById("loading")
-                .style.display = "none";
-
-
-            Swal.fire({
-
-                icon: "error",
-
-                title: "Upload Gagal",
-
-                text:
-                    error.message ||
-                    "Terjadi kesalahan saat upload foto."
-
-            });
-
-        }
-
-    }
-
-
-    // =========================================================
-    // CEK WAKTU ABSEN
-    // =========================================================
-
-    function cekWaktuAbsen() {
-
-        const now = new Date();
-
-
-        const jam =
+        const jamAngka =
             now.getHours();
 
 
-        const menit =
+        const menitAngka =
             now.getMinutes();
 
 
+
+        // -------------------------------------------------
+        // FORMAT 2 DIGIT
+        // -------------------------------------------------
+
+        const jam =
+            String(jamAngka)
+            .padStart(2,"0");
+
+
+        const menit =
+            String(menitAngka)
+            .padStart(2,"0");
+
+
+        const detik =
+            String(now.getSeconds())
+            .padStart(2,"0");
+
+
+
+        // =================================================
+        // FORMAT:
+        // HH:MM:SS WIB
+        // =================================================
+
+        const waktuLengkap =
+            jam +
+            ":" +
+            menit +
+            ":" +
+            detik +
+            " wib";
+
+
+
+        // =================================================
+        // MENENTUKAN KETERANGAN ABSENSI
+        // =================================================
+
+        let keterangan;
+
+
+
         /*
-         ========================================================
-         BATAS HALAMAN ABSENSI
+        ====================================================
+        BATAS WAKTU ABSENSI
 
-         Saat ini tetap menggunakan batas:
-         23:15
+        Tepat waktu:
+        00:00 sampai 07:45
 
-         Jika pukul 23:15 atau lebih,
-         halaman akan mengarahkan ke home.html.
-         ========================================================
+        Terlambat:
+        07:46 ke atas
+        ====================================================
         */
 
+
         if(
-            jam > 23 ||
+
+            jamAngka > 7 ||
+
             (
-                jam === 23 &&
-                menit >= 15
+                jamAngka === 7 &&
+                menitAngka > 45
             )
+
         ){
 
-            Swal.fire({
+            keterangan =
+                "Terlambat";
 
-                icon: "warning",
+        }else{
 
-                title: "Waktu Absen Lewat!",
-
-                text:
-                    "Silakan kembali ke halaman utama",
-
-                confirmButtonText: "OK"
-
-            }).then(() => {
-
-                window.location.href =
-                    "home.html";
-
-            });
+            keterangan =
+                "Tepat Waktu";
 
         }
 
+
+
+        console.log(
+            "Jam Absensi:",
+            waktuLengkap
+        );
+
+
+        console.log(
+            "Keterangan:",
+            keterangan
+        );
+
+
+
+        // =================================================
+        // HAPUS DATA IZIN / BELUMHADIR
+        // =================================================
+
+        firebase
+            .database()
+            .ref(
+                "izin/belumhadir/" +
+                tanggal +
+                "/" +
+                nama
+            )
+            .remove();
+
+
+
+        // =================================================
+        // SIMPAN KE ABSEN
+        // =================================================
+
+        firebase
+            .database()
+            .ref(
+                "absen/" +
+                tanggal +
+                "/" +
+                nama
+            )
+            .update({
+
+                photo:
+                    imageUrl,
+
+                waktu:
+                    waktuLengkap,
+
+                date:
+                    tampilanBulan,
+
+                nama:
+                    nama,
+
+                pulang:
+                    pulang,
+
+                mulailembur:
+                    mulaiLembur,
+
+                selesailembur:
+                    selesaiLembur,
+
+                keterangan:
+                    keterangan
+
+            });
+
+
+
+        // =================================================
+        // SIMPAN KE PERIODE
+        // =================================================
+
+        firebase
+            .database()
+            .ref(
+                "periode/" +
+                nama +
+                "/" +
+                tanggal
+            )
+            .update({
+
+                photo:
+                    imageUrl,
+
+                waktu:
+                    waktuLengkap,
+
+                date:
+                    tanggal,
+
+                nama:
+                    nama,
+
+                tanggal:
+                    tampilanBulan,
+
+                pulang:
+                    pulang,
+
+                mulailembur:
+                    mulaiLembur,
+
+                selesailembur:
+                    selesaiLembur,
+
+                keterangan:
+                    keterangan
+
+            });
+
+
+
+        // =================================================
+        // SIMPAN KE BACKUP
+        // =================================================
+
+        firebase
+            .database()
+            .ref(
+                "backup/" +
+                tanggal +
+                "/" +
+                nama
+            )
+            .update({
+
+                photo:
+                    imageUrl,
+
+                waktu:
+                    waktuLengkap,
+
+                date:
+                    tampilanBulan,
+
+                nama:
+                    nama,
+
+                pulang:
+                    pulang,
+
+                mulailembur:
+                    mulaiLembur,
+
+                selesailembur:
+                    selesaiLembur,
+
+                keterangan:
+                    keterangan
+
+            });
+
+
+
+        // =================================================
+        // SIMPAN KE IZIN / HADIR
+        // =================================================
+
+        firebase
+            .database()
+            .ref(
+                "izin/hadir/" +
+                tanggal +
+                "/" +
+                nama
+            )
+            .update({
+
+                photo:
+                    imageUrl,
+
+                waktu:
+                    waktuLengkap,
+
+                date:
+                    tanggal,
+
+                nama:
+                    nama,
+
+                tanggal:
+                    tampilanBulan,
+
+                pulang:
+                    pulang,
+
+                mulailembur:
+                    mulaiLembur,
+
+                selesailembur:
+                    selesaiLembur,
+
+                keterangan:
+                    keterangan
+
+            });
+
+
+
+        // =================================================
+        // SELESAI
+        // =================================================
+
+        document
+            .getElementById("btnupload")
+            .style.display =
+            "none";
+
+
+        document
+            .getElementById("loading")
+            .style.display =
+            "none";
+
+
+
+        // =================================================
+        // PESAN BERHASIL
+        // =================================================
+
+        Swal.fire({
+
+            position:
+                "top-end",
+
+            icon:
+                "success",
+
+            title:
+                "Berhasil di Upload",
+
+            text:
+                "Jangan lupa melakukan Absensi Pulang, karena hal wajib untuk dilaksanakan !!",
+
+            showConfirmButton:
+                false,
+
+            timer:
+                5000,
+
+            timerProgressBar:
+                true
+
+        });
+
+
+
+    }catch(error){
+
+
+        console.error(
+            "Upload gagal:",
+            error
+        );
+
+
+        document
+            .getElementById("loading")
+            .style.display =
+            "none";
+
+
+        Swal.fire({
+
+            icon:
+                "error",
+
+            title:
+                "Upload Gagal",
+
+            text:
+                error.message ||
+                "Terjadi kesalahan saat upload foto."
+
+        });
+
     }
 
-
-    // =========================================================
-    // JALANKAN SAAT HALAMAN DIBUKA
-    // =========================================================
-
-    cekWaktuAbsen();
+}
 
 
-    // =========================================================
-    // CEK SETIAP 10 DETIK
-    // =========================================================
 
-    setInterval(
-        cekWaktuAbsen,
-        10000
-    );
+// =========================================================
+// CEK WAKTU ABSEN
+// =========================================================
+
+function cekWaktuAbsen(){
+
+
+    const now =
+        new Date();
+
+
+    const jam =
+        now.getHours();
+
+
+    const menit =
+        now.getMinutes();
+
+
+
+    /*
+    ========================================================
+    BATAS HALAMAN ABSENSI
+
+    Saat ini tetap menggunakan batas:
+
+    23:15
+
+    Jika pukul 23:15 atau lebih,
+    halaman akan mengarahkan ke home.html.
+    ========================================================
+    */
+
+
+    if(
+
+        jam > 23 ||
+
+        (
+            jam === 23 &&
+            menit >= 15
+        )
+
+    ){
+
+        Swal.fire({
+
+            icon:
+                "warning",
+
+            title:
+                "Waktu Absen Lewat!",
+
+            text:
+                "Silakan kembali ke halaman utama",
+
+            confirmButtonText:
+                "OK"
+
+        }).then(() => {
+
+            window.location.href =
+                "home.html";
+
+        });
+
+    }
+
+}
+
+
+
+// =========================================================
+// JALANKAN SAAT HALAMAN DIBUKA
+// =========================================================
+
+cekWaktuAbsen();
+
+
+
+// =========================================================
+// CEK SETIAP 10 DETIK
+// =========================================================
+
+setInterval(
+
+    cekWaktuAbsen,
+
+    10000
+
+);
+
 
 </script>
 
+
 </body>
+
 </html>
+```
